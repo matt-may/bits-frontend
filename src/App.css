@@ -28,3 +28,15 @@
     width: 100%;
   }
 }
+
+.infinite {
+  border: 2px solid #000;
+}
+
+.infinite-list-item {
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    width: 120px;
+    margin: auto;
+}
