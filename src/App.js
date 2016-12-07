@@ -1,18 +1,41 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import './App.css'
+
+const Bits = [
+  { body: 'My fair body' },
+  { body: 'Hey there buddy'}
+]
+
+class SearchBar extends Component {
+  render() {
+    return (
+      <div></div>
+    );
+  }
+}
+
+class BitEditor extends Component {
+  render() {
+    return (
+      <div></div>
+    );
+  }
+}
+
+class BitPreview extends Component {
+  render() {
+    return (
+      <div></div>
+    );
+  }
+}
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      <div className="app">
+        <button>Clickme</button>
       </div>
     );
   }
