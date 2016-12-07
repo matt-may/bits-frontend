@@ -46,51 +46,52 @@ class BitBox extends Component {
   }
 
   buildElements(start, end) {
-      var elements = [];
+    var elements = [];
 
-      for (var i = start; i < end; i++) {
-          elements.push(<BitPreview key={i} num={i} body={bits[0].body}/>)
-      }
+    for (var i = start; i < end; i++) {
+      elements.push(<BitPreview key={i} num={i} body={bits[0].body}/>)
+    }
 
-      return elements;
+    return elements;
   }
 
   handleInfiniteLoad = () => {
-      var that = this;
+    var that = this;
 
-      this.setState({
-          isInfiniteLoading: true
+    this.setState({
+      isInfiniteLoading: true
+    });
+
+    setTimeout(function() {
+      var elemLength = that.state.elements.length,
+          newElements = that.buildElements(elemLength, elemLength + 1000);
+
+      that.setState({
+        isInfiniteLoading: false,
+        elements: that.state.elements.concat(newElements)
       });
-
-      setTimeout(function() {
-        var elemLength = that.state.elements.length,
-            newElements = that.buildElements(elemLength, elemLength + 1000);
-
-        that.setState({
-            isInfiniteLoading: false,
-            elements: that.state.elements.concat(newElements)
-        });
-      }, 0);
+    }, 0);
   }
 
   elementInfiniteLoad() {
-      return (
-        <div className="infinite-list-item">
-          Loading...
-        </div>
-      );
+    return (
+      <div className="infinite-list-item">
+        Loading...
+      </div>
+    );
   }
 
   render() {
-      return (
-        <Infinite elementHeight={40}
-                  containerHeight={250}
-                  infiniteLoadBeginEdgeOffset={200}
-                  onInfiniteLoad={this.handleInfiniteLoad}
-                  loadingSpinnerDelegate={this.elementInfiniteLoad()}
-                  isInfiniteLoading={this.state.isInfiniteLoading}>
-          {this.state.elements}
-      </Infinite>);
+    return (
+      <Infinite elementHeight={40}
+                containerHeight={250}
+                infiniteLoadBeginEdgeOffset={200}
+                onInfiniteLoad={this.handleInfiniteLoad}
+                loadingSpinnerDelegate={this.elementInfiniteLoad()}
+                isInfiniteLoading={this.state.isInfiniteLoading}>
+        {this.state.elements}
+      </Infinite>
+    );
   }
 }
 
