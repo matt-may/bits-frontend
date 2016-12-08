@@ -11,10 +11,25 @@ const bits = [
   { body: 'Hey there buddy'}
 ];
 
-class SearchBar extends Component {
+class BitSearch extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { value: '' };
+  }
+
+  handleChange = (event) => {
+    this.setState({ value: event.target.value });
+  }
+
   render() {
     return (
-      <div></div>
+      <div>
+        <NewBitButton />
+        <div>
+          <input type="text" value={this.state.value} onChange={this.handleChange} />
+        </div>
+        <BitBox baseText={this.state.value}/>
+      </div>
     );
   }
 }
@@ -55,14 +70,23 @@ class BitBox extends Component {
     };
   }
 
-  buildElements(start, end) {
-    var elements = [];
+  buildElements(start, end, props) {
+    var currentProps = props || this.props,
+        elements = [];
 
     for (var i = start; i < end; i++) {
-      elements.push(<BitPreview key={i} num={i} body={bits[0].body}/>)
+      elements.push(<BitPreview key={i} num={i} body={currentProps.baseText}/>)
     }
 
     return elements;
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.baseText != nextProps.baseText) {
+      this.setState(
+        { elements: this.buildElements(0, 10, nextProps) }
+      );
+    }
   }
 
   handleInfiniteLoad = () => {
@@ -80,7 +104,7 @@ class BitBox extends Component {
         isInfiniteLoading: false,
         elements: that.state.elements.concat(newElements)
       });
-    }, 0);
+    }, 5000);
   }
 
   elementInfiniteLoad() {
@@ -94,11 +118,10 @@ class BitBox extends Component {
   render() {
     return (
       <div>
-        <NewBitButton />
         <div className="infinite">
           <Infinite elementHeight={40}
-                    useWindowAsScrollContainer
-                    //containerHeight={window.height}
+                    //useWindowAsScrollContainer
+                    containerHeight={250}
                     infiniteLoadBeginEdgeOffset={200}
                     onInfiniteLoad={this.handleInfiniteLoad}
                     loadingSpinnerDelegate={this.elementInfiniteLoad()}
@@ -146,7 +169,7 @@ ReactDOM.render(
   <Router history={browserHistory}>
     <Route path="/" component={App}>
       <Route path="bits" component={BitContainer}>
-       <IndexRoute component={BitBox}/>
+       <IndexRoute component={BitSearch}/>
        <Route path=":id" component={BitEditor} />
        <Route path="new" component={BitEditor} />
      </Route>
