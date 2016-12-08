@@ -5,6 +5,8 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Infinite from 'react-infinite';
 import marked from 'marked';
 import SimpleMDE from 'simplemde';
+import 'whatwg-fetch';
+
 import './index.css';
 import './App.css';
 import './simplemde.min.css'
@@ -14,14 +16,24 @@ const bits = [
   { body: 'Hey there buddy'}
 ];
 
+const BITS_URI = 'https://jsonplaceholder.typicode.com/posts'
+
 class BitSearch extends Component {
   constructor(props) {
     super(props);
-    this.state = { value: '' };
+    this.state = { value: '', elem: '' };
   }
 
   handleChange = (event) => {
+    var that = this;
     this.setState({ value: event.target.value });
+
+    fetch(BITS_URI)
+    .then(function(response) {
+      return response.json()
+    }).then(function(body) {
+      that.setState({ elem: body[0].title.slice(0,25) })
+    });
   }
 
   render() {
@@ -31,7 +43,9 @@ class BitSearch extends Component {
         <div>
           <input type='text' value={this.state.value} onChange={this.handleChange} />
         </div>
-        <BitBox bodyText={this.state.value}/>
+        <BitBox bodyText={this.state.elem}/>
+
+        {/* <BitBox bodyText={this.state.value}/> */}
       </div>
     );
   }
