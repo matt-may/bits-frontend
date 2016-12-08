@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { Router, Route, Link, IndexRoute, browserHistory } from 'react-router';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Infinite from 'react-infinite';
+import './index.css';
 import './App.css';
 
 const bits = [
@@ -17,10 +19,18 @@ class SearchBar extends Component {
   }
 }
 
+class NewBitButton extends Component {
+  render() {
+    return (
+      <Link to={`/bits/new`} className="btn btn-black">New Bit</Link>
+    );
+  }
+}
+
 class BitEditor extends Component {
   render() {
     return (
-      <div></div>
+      <div>i'm the editor!</div>
     );
   }
 }
@@ -29,7 +39,7 @@ class BitPreview extends Component {
   render() {
     return (
       <div className="infinite-list-item">
-        {this.props.body}
+        <Link to={`/bits/${this.props.num}`}>{this.props.body}</Link>
       </div>
     );
   }
@@ -40,7 +50,7 @@ class BitBox extends Component {
     super(props);
 
     this.state = {
-      elements: this.buildElements(0, 20),
+      elements: this.buildElements(0, 10),
       isInfiniteLoading: false
     };
   }
@@ -64,7 +74,7 @@ class BitBox extends Component {
 
     setTimeout(function() {
       var elemLength = that.state.elements.length,
-          newElements = that.buildElements(elemLength, elemLength + 1000);
+          newElements = that.buildElements(elemLength, elemLength + 1);
 
       that.setState({
         isInfiniteLoading: false,
@@ -83,14 +93,20 @@ class BitBox extends Component {
 
   render() {
     return (
-      <Infinite elementHeight={40}
-                containerHeight={250}
-                infiniteLoadBeginEdgeOffset={200}
-                onInfiniteLoad={this.handleInfiniteLoad}
-                loadingSpinnerDelegate={this.elementInfiniteLoad()}
-                isInfiniteLoading={this.state.isInfiniteLoading}>
-        {this.state.elements}
-      </Infinite>
+      <div>
+        <NewBitButton />
+        <div className="infinite">
+          <Infinite elementHeight={40}
+                    useWindowAsScrollContainer
+                    //containerHeight={window.height}
+                    infiniteLoadBeginEdgeOffset={200}
+                    onInfiniteLoad={this.handleInfiniteLoad}
+                    loadingSpinnerDelegate={this.elementInfiniteLoad()}
+                    isInfiniteLoading={this.state.isInfiniteLoading}>
+            {this.state.elements}
+          </Infinite>
+        </div>
+      </div>
     );
   }
 }
@@ -99,12 +115,42 @@ class App extends Component {
   render() {
     return (
       <div className="app">
-        <div className="infinite">
-          <BitBox />
+        <h1>App</h1>
+        <ul>
+          <li><Link to="/bits">Bits</Link></li>
+        </ul>
+        <div>
+          {this.props.children}
         </div>
       </div>
     );
   }
 }
 
-export default App;
+class BitContainer extends Component {
+  render() {
+    return (
+      <div>
+        <h2>Bits</h2>
+        <div>
+          {this.props.children}
+        </div>
+      </div>
+    );
+  }
+}
+
+// export default App;
+
+ReactDOM.render(
+  <Router history={browserHistory}>
+    <Route path="/" component={App}>
+      <Route path="bits" component={BitContainer}>
+       <IndexRoute component={BitBox}/>
+       <Route path=":id" component={BitEditor} />
+       <Route path="new" component={BitEditor} />
+     </Route>
+    </Route>
+  </Router>,
+  document.getElementById('root')
+);

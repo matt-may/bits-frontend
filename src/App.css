@@ -11,22 +11,21 @@
 }
 
 .btn {
-  min-width: 125px;
-  border: none;
-  color: #fff;
-  min-height: 35px;
+  display: inline-block;
+  padding: 6px 12px;
   font-size: 15px;
+  text-align: center;
   cursor: pointer;
+  text-decoration: none;
+  color: #fff;
 }
 
-.btn.black {
+.btn-black {
   background: #000;
 }
 
-@media(max-width: 767px) {
-  .btn.block {
-    width: 100%;
-  }
+.btn-block {
+  width: 100%;
 }
 
 .infinite {
@@ -34,9 +33,9 @@
 }
 
 .infinite-list-item {
-    height: 40px;
-    text-align: center;
-    line-height: 40px;
-    width: 120px;
-    margin: auto;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+  width: 120px;
+  margin: auto;
 }
