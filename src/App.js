@@ -26,7 +26,7 @@ class BitSearch extends Component {
       <div>
         <NewBitButton />
         <div>
-          <input type="text" value={this.state.value} onChange={this.handleChange} />
+          <input type='text' value={this.state.value} onChange={this.handleChange} />
         </div>
         <BitBox baseText={this.state.value}/>
       </div>
@@ -37,7 +37,7 @@ class BitSearch extends Component {
 class NewBitButton extends Component {
   render() {
     return (
-      <Link to={`/bits/new`} className="btn btn-black">New Bit</Link>
+      <Link to={`/bits/new`} className='btn btn-black'>New Bit</Link>
     );
   }
 }
@@ -53,7 +53,7 @@ class BitEditor extends Component {
 class BitPreview extends Component {
   render() {
     return (
-      <div className="infinite-list-item">
+      <div className='infinite-list-item'>
         <Link to={`/bits/${this.props.num}`}>{this.props.body}</Link>
       </div>
     );
@@ -109,7 +109,7 @@ class BitBox extends Component {
 
   elementInfiniteLoad() {
     return (
-      <div className="infinite-list-item">
+      <div className='infinite-list-item'>
         Loading...
       </div>
     );
@@ -118,7 +118,7 @@ class BitBox extends Component {
   render() {
     return (
       <div>
-        <div className="infinite">
+        <div className='infinite'>
           <Infinite elementHeight={40}
                     //useWindowAsScrollContainer
                     containerHeight={250}
@@ -137,10 +137,10 @@ class BitBox extends Component {
 class App extends Component {
   render() {
     return (
-      <div className="app">
+      <div className='app'>
         <h1>App</h1>
         <ul>
-          <li><Link to="/bits">Bits</Link></li>
+          <li><Link to='/bits'>Bits</Link></li>
         </ul>
         <div>
           {this.props.children}
@@ -163,16 +163,27 @@ class BitContainer extends Component {
   }
 }
 
+class GenericNotFound extends Component {
+  render() {
+    return (
+      <div>
+        Not found buddy
+      </div>
+    );
+  }
+}
+
 // export default App;
 
 ReactDOM.render(
   <Router history={browserHistory}>
-    <Route path="/" component={App}>
-      <Route path="bits" component={BitContainer}>
-       <IndexRoute component={BitSearch}/>
-       <Route path=":id" component={BitEditor} />
-       <Route path="new" component={BitEditor} />
-     </Route>
+    <Route path='/' component={App}>
+      <Route path='bits' component={BitContainer}>
+        <IndexRoute component={BitSearch}/>
+        <Route path=':id' component={BitEditor} />
+        <Route path='new' component={BitEditor} />
+      </Route>
+      <Route path='*' component={GenericNotFound} />
     </Route>
   </Router>,
   document.getElementById('root')
