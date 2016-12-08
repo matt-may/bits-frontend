@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Router, Route, Link, IndexRoute, browserHistory } from 'react-router';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Infinite from 'react-infinite';
+import marked from 'marked';
 import SimpleMDE from 'simplemde';
 import './index.css';
 import './App.css';
@@ -30,7 +31,7 @@ class BitSearch extends Component {
         <div>
           <input type='text' value={this.state.value} onChange={this.handleChange} />
         </div>
-        <BitBox baseText={this.state.value}/>
+        <BitBox bodyText={this.state.value}/>
       </div>
     );
   }
@@ -74,11 +75,24 @@ class BitEditor extends Component {
   }
 }
 
+class Markdown extends Component {
+  getRawMarkup() {
+    return { __html: marked(this.props.source, { sanitize: true })};
+  }
+
+  render() {
+    return (
+      <span dangerouslySetInnerHTML={this.getRawMarkup()}></span>
+    );
+  }
+}
+
 class BitPreview extends Component {
   render() {
     return (
       <div className='infinite-list-item'>
-        <Link to={`/bits/${this.props.num}`}>{this.props.body}</Link>
+        <Markdown source={this.props.bodyText} />
+        {/* <Link to={`/bits/${this.props.num}`}>{this.props.body}</Link> */}
       </div>
     );
   }
@@ -99,14 +113,14 @@ class BitBox extends Component {
         elements = [];
 
     for (var i = start; i < end; i++) {
-      elements.push(<BitPreview key={i} num={i} body={currentProps.baseText}/>)
+      elements.push(<BitPreview key={i} num={i} bodyText={currentProps.bodyText}/>)
     }
 
     return elements;
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.baseText != nextProps.baseText) {
+    if (this.props.bodyText != nextProps.bodyText) {
       this.setState(
         { elements: this.buildElements(0, 10, nextProps) }
       );
@@ -128,7 +142,7 @@ class BitBox extends Component {
         isInfiniteLoading: false,
         elements: that.state.elements.concat(newElements)
       });
-    }, 5000);
+    }, 0);
   }
 
   elementInfiniteLoad() {
@@ -144,7 +158,7 @@ class BitBox extends Component {
       <div>
         <div className='infinite'>
           <Infinite elementHeight={40}
-                    //useWindowAsScrollContainer
+                    useWindowAsScrollContainer
                     containerHeight={250}
                     infiniteLoadBeginEdgeOffset={200}
                     onInfiniteLoad={this.handleInfiniteLoad}
