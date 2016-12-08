@@ -3,8 +3,10 @@ import ReactDOM from 'react-dom';
 import { Router, Route, Link, IndexRoute, browserHistory } from 'react-router';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Infinite from 'react-infinite';
+import SimpleMDE from 'simplemde';
 import './index.css';
 import './App.css';
+import './simplemde.min.css'
 
 const bits = [
   { body: 'My fair body' },
@@ -43,9 +45,31 @@ class NewBitButton extends Component {
 }
 
 class BitEditor extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: 'Please write an essay about your favorite DOM element.'
+    };
+  }
+
+  componentDidMount() {
+    this.simplemde = new SimpleMDE({
+      spellChecker: false
+    });
+  }
+
+  componentWillUnmount() {
+    this.simplemde.toTextArea();
+    this.simplemde = null;
+  }
+
+  handleChange = (event) => {
+    this.setState({value: event.target.value});
+  }
+
   render() {
     return (
-      <div>i'm the editor!</div>
+      <textarea value={this.state.value} onChange={this.handleChange} />
     );
   }
 }
@@ -154,10 +178,7 @@ class BitContainer extends Component {
   render() {
     return (
       <div>
-        <h2>Bits</h2>
-        <div>
-          {this.props.children}
-        </div>
+        {this.props.children}
       </div>
     );
   }
