@@ -120,7 +120,7 @@ class BitBox extends Component {
     this.buildPreviews();
   }
 
-  buildPreviews(newProps, concatItems) {
+  buildPreviews({ newProps = null, concatItems = false } = {}) {
     let props = newProps || this.props,
         bitURI = BASE_URI,
         that = this;
@@ -148,12 +148,12 @@ class BitBox extends Component {
 
   componentWillReceiveProps(newProps) {
     if (this.props.query != newProps.query)
-      this.buildPreviews(newProps, null);
+      this.buildPreviews({ newProps: newProps });
   }
 
   handleLoad = () => {
     this.setState({ loading: true });
-    this.buildPreviews(null, true);
+    this.buildPreviews({ concatItems: true });
   }
 
   loadingElem() {
