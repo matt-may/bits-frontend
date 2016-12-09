@@ -135,8 +135,8 @@ class BitBox extends Component {
       return response.json();
     })
     .then((body) => {
-      let newItems = body.map((item, indx) => {
-        return <BitPreview key={indx} num={indx} body={item.body} />;
+      let newItems = body.map((item) => {
+        return <BitPreview key={item.id} num={item.id} body={item.body} />;
       });
 
       if (concatItems)
@@ -173,7 +173,7 @@ class BitBox extends Component {
                     containerHeight={250}
                     infiniteLoadBeginEdgeOffset={200}
                     onInfiniteLoad={this.handleLoad}
-                    loadingSpinnerDelegate={this.loadingElem()}
+                    //loadingSpinnerDelegate={this.loadingElem()}
                     isInfiniteLoading={this.state.loading}>
             {this.state.items}
           </Infinite>
