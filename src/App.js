@@ -1,3 +1,5 @@
+'use strict';
+
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, Link, IndexRoute, browserHistory } from 'react-router';
@@ -25,7 +27,8 @@ class BitSearch extends Component {
   }
 
   handleChange = (event) => {
-    var that = this;
+    let that = this;
+
     this.setState({ value: event.target.value });
 
     fetch(BITS_URI)
@@ -62,14 +65,26 @@ class NewBitButton extends Component {
 class BitEditor extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      value: 'Please write an essay about your favorite DOM element.'
-    };
+    this.state = { value: '' };
   }
 
   componentDidMount() {
     this.simplemde = new SimpleMDE({
-      spellChecker: false
+      autofocus: true,
+      initialValue: this.props.initialValue || '',
+      spellChecker: false,
+      status: ['autosave', 'words'],
+    });
+
+    let that = this;
+
+    // Handle the change event on the SimpleMDE editor
+    this.simplemde.codemirror.on('change', () => {
+      // Save the value of the MDE element
+      let value = that.simplemde.value();
+
+      // Call the handleChange method on the component
+      that.handleChange(value);
     });
   }
 
@@ -78,13 +93,14 @@ class BitEditor extends Component {
     this.simplemde = null;
   }
 
-  handleChange = (event) => {
-    this.setState({value: event.target.value});
+  handleChange(value) {
+    // Set's the value of the textarea
+    this.setState({ value: value });
   }
 
   render() {
     return (
-      <textarea value={this.state.value} onChange={this.handleChange} />
+      <textarea value={this.state.value} />
     );
   }
 }
