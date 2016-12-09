@@ -1,5 +1,3 @@
-'use strict';
-
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, Link, IndexRoute, browserHistory } from 'react-router';
@@ -13,30 +11,18 @@ import './index.css';
 import './App.css';
 import './simplemde.min.css'
 
-const bits = [
-  { body: 'My fair body' },
-  { body: 'Hey there buddy'}
-];
-
-const BITS_URI = 'https://jsonplaceholder.typicode.com/posts'
+const BASE_URI = 'http://localhost:3005';
+const BITS_INDEX_PATH = '/bits';
+const BITS_SEARCH_PATH = BITS_INDEX_PATH + '/search';
 
 class BitSearch extends Component {
   constructor(props) {
     super(props);
-    this.state = { value: '', elem: '' };
+    this.state = { value: '' };
   }
 
-  handleChange = (event) => {
-    let that = this;
-
-    this.setState({ value: event.target.value });
-
-    fetch(BITS_URI)
-    .then(function(response) {
-      return response.json()
-    }).then(function(body) {
-      that.setState({ elem: body[0].title.slice(0,25) })
-    });
+  handleChange = (e) => {
+    this.setState({ value: e.target.value });
   }
 
   render() {
@@ -46,9 +32,7 @@ class BitSearch extends Component {
         <div>
           <input type='text' value={this.state.value} onChange={this.handleChange} />
         </div>
-        <BitBox bodyText={this.state.elem}/>
-
-        {/* <BitBox bodyText={this.state.value}/> */}
+        <BitBox query={this.state.value} />
       </div>
     );
   }
@@ -94,7 +78,7 @@ class BitEditor extends Component {
   }
 
   handleChange(value) {
-    // Set's the value of the textarea
+    // Sets the value of the textarea
     this.setState({ value: value });
   }
 
@@ -121,7 +105,7 @@ class BitPreview extends Component {
   render() {
     return (
       <div className='infinite-list-item'>
-        <Markdown source={this.props.bodyText} />
+        <Markdown source={this.props.body} />
         {/* <Link to={`/bits/${this.props.num}`}>{this.props.body}</Link> */}
       </div>
     );
@@ -132,50 +116,47 @@ class BitBox extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      elements: this.buildElements(0, 10),
-      isInfiniteLoading: false
-    };
+    this.state = { items: [], loading: false };
+    this.buildPreviews();
   }
 
-  buildElements(start, end, props) {
-    var currentProps = props || this.props,
-        elements = [];
+  buildPreviews(newProps, concatItems) {
+    let props = newProps || this.props,
+        bitURI = BASE_URI,
+        that = this;
 
-    for (var i = start; i < end; i++) {
-      elements.push(<BitPreview key={i} num={i} bodyText={currentProps.bodyText}/>)
-    }
+    if (props.query)
+      bitURI += BITS_SEARCH_PATH + '?q=' + props.query;
+    else
+      bitURI += BITS_INDEX_PATH;
 
-    return elements;
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.bodyText != nextProps.bodyText) {
-      this.setState(
-        { elements: this.buildElements(0, 10, nextProps) }
-      );
-    }
-  }
-
-  handleInfiniteLoad = () => {
-    var that = this;
-
-    this.setState({
-      isInfiniteLoading: true
-    });
-
-    setTimeout(function() {
-      var elemLength = that.state.elements.length,
-          newElements = that.buildElements(elemLength, elemLength + 1);
-
-      that.setState({
-        isInfiniteLoading: false,
-        elements: that.state.elements.concat(newElements)
+    fetch(bitURI)
+    .then((response) => {
+      return response.json();
+    })
+    .then((body) => {
+      let newItems = body.map((item, indx) => {
+        return <BitPreview key={indx} num={indx} body={item.body} />;
       });
-    }, 0);
+
+      if (concatItems)
+        newItems = this.state.items.concat(newItems);
+
+      that.setState({ items: newItems, loading: false });
+    });
   }
 
-  elementInfiniteLoad() {
+  componentWillReceiveProps(newProps) {
+    if (this.props.query != newProps.query)
+      this.buildPreviews(newProps, null);
+  }
+
+  handleLoad = () => {
+    this.setState({ loading: true });
+    this.buildPreviews(null, true);
+  }
+
+  loadingElem() {
     return (
       <div className='infinite-list-item'>
         Loading...
@@ -191,10 +172,10 @@ class BitBox extends Component {
                     useWindowAsScrollContainer
                     containerHeight={250}
                     infiniteLoadBeginEdgeOffset={200}
-                    onInfiniteLoad={this.handleInfiniteLoad}
-                    loadingSpinnerDelegate={this.elementInfiniteLoad()}
-                    isInfiniteLoading={this.state.isInfiniteLoading}>
-            {this.state.elements}
+                    onInfiniteLoad={this.handleLoad}
+                    loadingSpinnerDelegate={this.loadingElem()}
+                    isInfiniteLoading={this.state.loading}>
+            {this.state.items}
           </Infinite>
         </div>
       </div>
