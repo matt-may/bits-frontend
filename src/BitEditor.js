@@ -1,13 +1,16 @@
 import React, { Component } from 'react';
-import { Editor, EditorState, RichUtils } from 'draft-js';
+import { Editor, EditorState, RichUtils, convertToRaw } from 'draft-js';
 
 class BitEditor extends Component {
   constructor(props) {
     super(props);
-    this.state = {editorState: EditorState.createEmpty()};
+    this.state = { editorState: EditorState.createEmpty() };
 
     this.focus = () => this.refs.editor.focus();
-    this.onChange = (editorState) => this.setState({editorState});
+    this.onChange = (editorState) => {
+      this.setState({ editorState });
+      //console.log(JSON.stringify(convertToRaw(editorState.getCurrentContent())));
+    }
 
     this.handleKeyCommand = (command) => this._handleKeyCommand(command);
     this.onTab = (e) => this._onTab(e);
@@ -16,7 +19,7 @@ class BitEditor extends Component {
   }
 
   _handleKeyCommand(command) {
-    const {editorState} = this.state;
+    const { editorState } = this.state;
     const newState = RichUtils.handleKeyCommand(editorState, command);
     if (newState) {
       this.onChange(newState);
@@ -49,7 +52,7 @@ class BitEditor extends Component {
   }
 
   render() {
-    const {editorState} = this.state;
+    const { editorState } = this.state;
 
     // If the user changes block type before entering any text, we can
     // either style the placeholder or hide it. Let's just hide it now.
@@ -62,7 +65,7 @@ class BitEditor extends Component {
     }
 
     return (
-      <div className="RichEditor-root">
+      <div className='RichEditor-root'>
         <BlockStyleControls
           editorState={editorState}
           onToggle={this.toggleBlockType}
@@ -79,8 +82,8 @@ class BitEditor extends Component {
             handleKeyCommand={this.handleKeyCommand}
             onChange={this.onChange}
             onTab={this.onTab}
-            placeholder="Tell a story..."
-            ref="editor"
+            placeholder='Write a new bit.'
+            ref='editor'
             spellCheck={true}
           />
         </div>
@@ -92,10 +95,8 @@ class BitEditor extends Component {
 // Custom overrides for "code" style.
 const styleMap = {
   CODE: {
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
     fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
     fontSize: 16,
-    padding: 2,
   },
 };
 
@@ -130,20 +131,17 @@ class StyleButton extends React.Component {
 }
 
 const BLOCK_TYPES = [
-  {label: 'H1', style: 'header-one'},
-  {label: 'H2', style: 'header-two'},
-  {label: 'H3', style: 'header-three'},
-  {label: 'H4', style: 'header-four'},
-  {label: 'H5', style: 'header-five'},
-  {label: 'H6', style: 'header-six'},
-  {label: 'Blockquote', style: 'blockquote'},
-  {label: 'UL', style: 'unordered-list-item'},
-  {label: 'OL', style: 'ordered-list-item'},
-  {label: 'Code Block', style: 'code-block'},
+  { label: 'Large', style: 'header-one' },
+  { label: 'Mid', style: 'header-two'},
+  { label: 'Small', style: 'header-three' },
+  { label: 'Quote', style: 'blockquote' },
+  { label: 'List', style: 'unordered-list-item' },
+  { label: 'Number List', style: 'ordered-list-item' },
+  { label: 'Code', style: 'code-block' },
 ];
 
 const BlockStyleControls = (props) => {
-  const {editorState} = props;
+  const { editorState } = props;
   const selection = editorState.getSelection();
   const blockType = editorState
     .getCurrentContent()
@@ -151,7 +149,7 @@ const BlockStyleControls = (props) => {
     .getType();
 
   return (
-    <div className="RichEditor-controls">
+    <div className='RichEditor-controls'>
       {BLOCK_TYPES.map((type) =>
         <StyleButton
           key={type.label}
@@ -166,10 +164,11 @@ const BlockStyleControls = (props) => {
 };
 
 var INLINE_STYLES = [
-  {label: 'Bold', style: 'BOLD'},
-  {label: 'Italic', style: 'ITALIC'},
-  {label: 'Underline', style: 'UNDERLINE'},
-  {label: 'Monospace', style: 'CODE'},
+  { label: 'Bold', style: 'BOLD' },
+  { label: 'Italic', style: 'ITALIC' },
+  { label: 'Underline', style: 'UNDERLINE' },
+  { label: 'Strikethrough', style: 'STRIKETHROUGH' },
+  { label: 'Monospace', style: 'CODE' }
 ];
 
 const InlineStyleControls = (props) => {
