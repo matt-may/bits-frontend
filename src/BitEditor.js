@@ -103,7 +103,7 @@ class BitEditor extends Component {
 // Custom overrides for "code" style.
 const styleMap = {
   CODE: {
-    fontFamily: '"Inconsolata", "Menlo", "Consolas", monospace',
+    fontFamily: 'monospace',
     fontSize: 16,
   },
 };
