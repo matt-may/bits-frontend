@@ -110,7 +110,7 @@ class BitBox extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (this.props.query != newProps.query)
+    if (this.props.query !== newProps.query)
       this.buildPreviews({ newProps: newProps });
   }
 
