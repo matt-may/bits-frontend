@@ -8,7 +8,7 @@ import './StickyEditor.css';
 class BitEditor extends Component {
   constructor(props) {
     super(props);
-    this.state = { editorState: EditorState.createEmpty() };
+    this.state = { editorState: EditorState.createEmpty(), fullWindow: false };
 
     this.focus = () => this.refs.editor.focus();
     this.onChange = (editorState) => {
@@ -20,6 +20,7 @@ class BitEditor extends Component {
     this.onTab = (e) => this._onTab(e);
     this.toggleBlockType = (type) => this._toggleBlockType(type);
     this.toggleInlineStyle = (style) => this._toggleInlineStyle(style);
+    this.toggleFullWindow = () => this._toggleFullWindow();
   }
 
   _handleKeyCommand(command) {
@@ -55,6 +56,12 @@ class BitEditor extends Component {
     );
   }
 
+  _toggleFullWindow() {
+    this.setState((prevState) => ({
+      fullWindow: !prevState.fullWindow
+    }));
+  }
+
   render() {
     const { editorState } = this.state;
 
@@ -68,8 +75,13 @@ class BitEditor extends Component {
       }
     }
 
+    // Make the editor span the window if the option has been toggled.
+    let wrapperClassName = 'editor-rich-root';
+    if (this.state.fullWindow)
+      wrapperClassName += ' editor-full-window';
+
     return (
-      <div className='editor-rich-root'>
+      <div className={wrapperClassName}>
         <StickyContainer>
           <Sticky stickyClassName='sticky editor-sticky'>
             <BlockStyleControls
