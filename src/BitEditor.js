@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import { Editor, EditorState, RichUtils, convertToRaw } from 'draft-js';
+import { StickyContainer, Sticky } from 'react-sticky';
+
+import './Sticky.css';
+import './StickyEditor.css';
 
 class BitEditor extends Component {
   constructor(props) {
@@ -56,37 +60,41 @@ class BitEditor extends Component {
 
     // If the user changes block type before entering any text, we can
     // either style the placeholder or hide it. Let's just hide it now.
-    let className = 'RichEditor-editor';
+    let className = 'editor-rich-editor';
     var contentState = editorState.getCurrentContent();
     if (!contentState.hasText()) {
       if (contentState.getBlockMap().first().getType() !== 'unstyled') {
-        className += ' RichEditor-hidePlaceholder';
+        className += ' editor-rich-hidePlaceholder';
       }
     }
 
     return (
-      <div className='RichEditor-root'>
-        <BlockStyleControls
-          editorState={editorState}
-          onToggle={this.toggleBlockType}
-        />
-        <InlineStyleControls
-          editorState={editorState}
-          onToggle={this.toggleInlineStyle}
-        />
-        <div className={className} onClick={this.focus}>
-          <Editor
-            blockStyleFn={getBlockStyle}
-            customStyleMap={styleMap}
-            editorState={editorState}
-            handleKeyCommand={this.handleKeyCommand}
-            onChange={this.onChange}
-            onTab={this.onTab}
-            placeholder='Write a new bit.'
-            ref='editor'
-            spellCheck={true}
-          />
-        </div>
+      <div className='editor-rich-root'>
+        <StickyContainer>
+          <Sticky stickyClassName='sticky editor-sticky'>
+            <BlockStyleControls
+              editorState={editorState}
+              onToggle={this.toggleBlockType}
+            />
+            <InlineStyleControls
+              editorState={editorState}
+              onToggle={this.toggleInlineStyle}
+            />
+          </Sticky>
+          <div className={className} onClick={this.focus}>
+            <Editor
+              blockStyleFn={getBlockStyle}
+              customStyleMap={styleMap}
+              editorState={editorState}
+              handleKeyCommand={this.handleKeyCommand}
+              onChange={this.onChange}
+              onTab={this.onTab}
+              placeholder='Write a new bit.'
+              ref='editor'
+              spellCheck={true}
+            />
+          </div>
+        </StickyContainer>
       </div>
     );
   }
@@ -102,7 +110,7 @@ const styleMap = {
 
 function getBlockStyle(block) {
   switch (block.getType()) {
-    case 'blockquote': return 'RichEditor-blockquote';
+    case 'blockquote': return 'editor-rich-blockquote';
     default: return null;
   }
 }
@@ -117,9 +125,9 @@ class StyleButton extends React.Component {
   }
 
   render() {
-    let className = 'RichEditor-styleButton';
+    let className = 'editor-rich-styleButton';
     if (this.props.active) {
-      className += ' RichEditor-activeButton';
+      className += ' editor-rich-activeButton';
     }
 
     return (
@@ -149,7 +157,7 @@ const BlockStyleControls = (props) => {
     .getType();
 
   return (
-    <div className='RichEditor-controls'>
+    <div className='editor-rich-controls'>
       {BLOCK_TYPES.map((type) =>
         <StyleButton
           key={type.label}
@@ -174,7 +182,7 @@ var INLINE_STYLES = [
 const InlineStyleControls = (props) => {
   var currentStyle = props.editorState.getCurrentInlineStyle();
   return (
-    <div className="RichEditor-controls">
+    <div className='editor-rich-controls'>
       {INLINE_STYLES.map(type =>
         <StyleButton
           key={type.label}
