@@ -10,6 +10,17 @@
   }
 }
 
+.header {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.header a {
+  font-family: 'Georgia';
+  font-style: italic;
+  text-decoration: none;
+}
+
 .btn {
   display: inline-block;
   padding: 6px 12px;

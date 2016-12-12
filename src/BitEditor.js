@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Editor, EditorState, RichUtils, convertToRaw } from 'draft-js';
 import { StickyContainer, Sticky } from 'react-sticky';
+import constants from './Constants.js';
 
 import './Sticky.css';
 import './StickyEditor.css';
@@ -8,12 +9,19 @@ import './StickyEditor.css';
 class BitEditor extends Component {
   constructor(props) {
     super(props);
+
+    if (props.createNew)
+      this.createNewBit()
+
     this.state = { editorState: EditorState.createEmpty(), fullWindow: false };
 
     this.focus = () => this.refs.editor.focus();
+
     this.onChange = (editorState) => {
       this.setState({ editorState });
-      //console.log(JSON.stringify(convertToRaw(editorState.getCurrentContent())));
+
+      //console.log(editorState.getCurrentContent().getPlainText());
+      //console.log(convertToRaw(editorState.getCurrentContent()))
     }
 
     this.handleKeyCommand = (command) => this._handleKeyCommand(command);
@@ -57,9 +65,26 @@ class BitEditor extends Component {
   }
 
   _toggleFullWindow() {
-    this.setState((prevState) => ({
-      fullWindow: !prevState.fullWindow
-    }));
+    this.setState((prevState) => (
+      { fullWindow: !prevState.fullWindow }
+    ));
+  }
+
+  createNewBit() {
+    // fetch(createBitURI)
+    // .then((response) => {
+    //   return response.json();
+    // })
+    // .then((body) => {
+    //   let newItems = body.map((item) => {
+    //     return <BitPreview key={item.id} num={item.id} body={item.body} />;
+    //   });
+    //
+    //   if (concatItems)
+    //     newItems = this.state.items.concat(newItems);
+    //
+    //   that.setState({ items: newItems, loading: false });
+    // });
   }
 
   render() {
@@ -92,6 +117,8 @@ class BitEditor extends Component {
               editorState={editorState}
               onToggle={this.toggleInlineStyle}
             />
+            {/* <Full
+            <button onClick={this.toggleFullWindow} style=</button> */}
           </Sticky>
           <div className={className} onClick={this.focus}>
             <Editor

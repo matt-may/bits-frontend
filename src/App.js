@@ -1,23 +1,21 @@
+/* @flow */
+
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, Link, IndexRoute, browserHistory } from 'react-router';
-// import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import Infinite from 'react-infinite';
-import marked from 'marked';
-import BitEditor from './BitEditor';
+// import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 // Fetch polyfill
 import 'whatwg-fetch';
+import BitEditor from './BitEditor';
+import constants from './Constants';
 
 // CSS files
 import './index.css';
 import './App.css';
 import './Draft.css';
 import './RichEditor.css';
-
-const BASE_URI = 'http://localhost:3005';
-const BITS_INDEX_PATH = '/bits';
-const BITS_SEARCH_PATH = BITS_INDEX_PATH + '/search';
 
 class BitSearch extends Component {
   constructor(props) {
@@ -50,11 +48,9 @@ class NewBitButton extends Component {
   }
 }
 
-
-
 class Markdown extends Component {
   getRawMarkup() {
-    return { __html: marked(this.props.source, { sanitize: true })};
+    return { __html: this.props.source };
   }
 
   render() {
@@ -68,7 +64,7 @@ class BitPreview extends Component {
   render() {
     return (
       <div className='infinite-list-item'>
-        <Markdown source={this.props.body} />
+        <Markdown source={this.props.body + " " + this.props.num} />
         {/* <Link to={`/bits/${this.props.num}`}>{this.props.body}</Link> */}
       </div>
     );
@@ -79,44 +75,55 @@ class BitBox extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { items: [], loading: false };
-    this.buildPreviews();
+    this.state = { items: [], loading: false, page: 1, numPages: 1 };
+    this.buildPreviews({ newPage: 1 });
   }
 
-  buildPreviews({ newProps = null, concatItems = false } = {}) {
-    let props = newProps || this.props,
-        bitURI = BASE_URI,
-        that = this;
+  buildPreviews({ nextProps = null, newPage = null, concatItems = false } = {}) {
+    let props = nextProps || this.props,
+        page  = newPage   || this.state.page,
+        that  = this,
+        bitURI;
 
     if (props.query)
-      bitURI += BITS_SEARCH_PATH + '?q=' + props.query;
+      bitURI = `${constants.BITS_SEARCH_PATH}?q=${props.query}&page=${page}`;
     else
-      bitURI += BITS_INDEX_PATH;
+      bitURI = `${constants.BITS_PATH}?page=${page}`;
 
     fetch(bitURI)
     .then((response) => {
       return response.json();
     })
     .then((body) => {
-      let newItems = body.map((item) => {
+      console.log(body);
+
+      let newItems = body.bits.map((item) => {
         return <BitPreview key={item.id} num={item.id} body={item.body} />;
       });
 
       if (concatItems)
         newItems = this.state.items.concat(newItems);
 
-      that.setState({ items: newItems, loading: false });
+      that.setState({ items: newItems, loading: false, numPages: body.numPages });
     });
   }
 
-  componentWillReceiveProps(newProps) {
-    if (this.props.query !== newProps.query)
-      this.buildPreviews({ newProps: newProps });
+  componentWillReceiveProps(nextProps) {
+    if (this.props.query !== nextProps.query)
+      this.buildPreviews({ nextProps: nextProps });
   }
 
   handleLoad = () => {
-    this.setState({ loading: true });
-    this.buildPreviews({ concatItems: true });
+    this.setState(function (prevState) {
+      let newPage = prevState.page + 1;
+
+      if (newPage > prevState.numPages)
+        return {};
+
+      this.buildPreviews({ concatItems: true, newPage: newPage });
+
+      return { loading: true, page: newPage };
+    });
   }
 
   loadingElem() {
@@ -151,9 +158,9 @@ class App extends Component {
     return (
       <div className='app'>
         <h1>App</h1>
-        <ul>
-          <li><Link to='/bits'>Bits</Link></li>
-        </ul>
+        <div className='header'>
+          <Link to='/bits'>Bits</Link>
+        </div>
         <div>
           {this.props.children}
         </div>
