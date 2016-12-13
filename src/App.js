@@ -127,7 +127,12 @@ class BitBox extends Component {
     .then((body) => {
       // Construct our new previews
       let newBits = body.bits.map((bit) => {
-        return <BitPreview key={bit.id} num={bit.id} body={bit.body} />;
+        // When using the search endpoint, the body for the bit is actually
+        // stored under the _source attribute, so account for that.
+        let bitBody = (bit._source) ? bit._source : bit;
+
+        // Return a BitPreview.
+        return <BitPreview key={bitBody.id} num={bitBody.id} body={bitBody.body} />;
       });
 
       // Concatenate if necessary
