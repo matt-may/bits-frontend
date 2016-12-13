@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Editor, EditorState, RichUtils, convertToRaw } from 'draft-js';
+import { Editor, EditorState, ContentState, RichUtils, convertFromRaw, convertToRaw } from 'draft-js';
 import { StickyContainer, Sticky } from 'react-sticky';
 
 import constants from './Constants';
@@ -10,6 +10,10 @@ import './StickyEditor.css';
 
 // Frequency at which to sync the client<->server bit state.
 const UPDATE_INTERVAL = 10000;
+
+// var rawData = convertToRaw(editorState.getCurrentContent())
+// var contentState = ContentState.createFromBlockArray(Draft.convertFromRaw(rawData))
+// var editorState = EditorState.createWithContent(contentState)
 
 class BitEditor extends Component {
   constructor(props) {
@@ -23,11 +27,16 @@ class BitEditor extends Component {
     // If we haven't been told to create a new bit, set this.bitID to the
     // specified already existing bitID. In this scenario, we are performing an
     // edit of an existing bit, not creating a new one.
-    else {
+    else if (this.props.bitID) {
       this.bitID = this.props.bitID;
+    }
+    else {
+      throw 'Error // Either the newBit prop or the bitID prop must be provided.'
     }
 
     // Initialize our state.
+    //
+    // `editorState` will contain the representation of editor state.
     // `fullWindow` specifies whether the editor is currently consuming the
     //   full browser window.
     // `inSync` specifies whether the server and client version of the bit
@@ -36,6 +45,9 @@ class BitEditor extends Component {
     //   update this to true.
     this.state = { editorState: EditorState.createEmpty(),
                    fullWindow: false, inSync: true };
+
+    if (this.bitID)
+      this.initializeEditorState();
 
     this.focus = () => this.refs.editor.focus();
 
@@ -112,6 +124,21 @@ class BitEditor extends Component {
   // Clears the update timer on unmount.
   componentWillUnmount() {
     clearInterval(this.timerID);
+  }
+
+  initializeEditorState() {
+    if (!this.bitID)
+      return
+
+    fetch(constants.BITS_PATH + `/${this.bitID}`)
+    .then(checkStatus)
+    .then(parseJSON)
+    .then((body) => {
+      let rawData = JSON.parse(body.js_body);
+      let contentState = convertFromRaw(rawData);
+
+      this.setState({ editorState: EditorState.createWithContent(contentState) });
+    });
   }
 
   // Sends a request to our backend to update the bit. If successful, updates
