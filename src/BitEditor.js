@@ -38,10 +38,6 @@ class BitEditor extends Component {
 
     this.onChange = (editorState) => {
       this.setState({ editorState, inSync: false });
-      this.updateBit();
-
-      //console.log();
-      //console.log()
     }
 
     this.handleKeyCommand = (command) => this._handleKeyCommand(command);
@@ -101,14 +97,30 @@ class BitEditor extends Component {
     });
   }
 
+  // On mounting, initiates a setInterval for sending updates to the bit from
+  // the client to our backend. By default, we send updates every 10 seconds.
+  componentDidMount() {
+    this.timerID = setInterval(
+      () => this.updateBit(),
+      10000
+    );
+  }
+
+  // Clears the update timer on unmount.
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
   // Sends a request to our backend to update the bit. If successful, updates
   // inSync in the state to true.
   updateBit() {
-    if (!this.bitID)
+    // Return if we have no bit ID to update, or we're already in sync.
+    if (!this.bitID || this.state.inSync)
       return
 
     let state = this.state.editorState;
 
+    // Post the most recent state of our bit to the server
     fetch(constants.BITS_PATH + `/${this.bitID}`, {
       method: 'PUT',
       headers: {
@@ -123,6 +135,7 @@ class BitEditor extends Component {
     })
     .then(checkStatus)
     .then(() => {
+      // Update inSync in our state
       this.setState({ inSync: true });
     });
   }
@@ -146,35 +159,39 @@ class BitEditor extends Component {
       wrapperClassName += ' editor-full-window';
 
     return (
-      <div className={wrapperClassName}>
-        <StickyContainer>
-          <Sticky stickyClassName='sticky editor-sticky'>
-            <BlockStyleControls
-              editorState={editorState}
-              onToggle={this.toggleBlockType}
-            />
-            <InlineStyleControls
-              editorState={editorState}
-              onToggle={this.toggleInlineStyle}
-            />
-            <span>Insync is {this.state.inSync ? 'true' : 'false'}</span>
-            {/* <Full
-            <button onClick={this.toggleFullWindow} style=</button> */}
-          </Sticky>
-          <div className={className} onClick={this.focus}>
-            <Editor
-              blockStyleFn={getBlockStyle}
-              customStyleMap={styleMap}
-              editorState={editorState}
-              handleKeyCommand={this.handleKeyCommand}
-              onChange={this.onChange}
-              onTab={this.onTab}
-              placeholder='Write a new bit.'
-              ref='editor'
-              spellCheck={true}
-            />
-          </div>
-        </StickyContainer>
+      <div>
+        <div className={wrapperClassName}>
+          <StickyContainer>
+            <Sticky stickyClassName='sticky editor-sticky'>
+              <BlockStyleControls
+                editorState={editorState}
+                onToggle={this.toggleBlockType}
+              />
+              <InlineStyleControls
+                editorState={editorState}
+                onToggle={this.toggleInlineStyle}
+              />
+              {/* <Full
+              <button onClick={this.toggleFullWindow} style=</button> */}
+            </Sticky>
+            <div className={className} onClick={this.focus}>
+              <Editor
+                blockStyleFn={getBlockStyle}
+                customStyleMap={styleMap}
+                editorState={editorState}
+                handleKeyCommand={this.handleKeyCommand}
+                onChange={this.onChange}
+                onTab={this.onTab}
+                placeholder='Write a new bit.'
+                ref='editor'
+                spellCheck={true}
+              />
+            </div>
+          </StickyContainer>
+        </div>
+        <span style={{ float: 'right', marginTop: '5px' }}>
+          {this.state.inSync ? 'Saved' : 'Saving...'}
+        </span>
       </div>
     );
   }
