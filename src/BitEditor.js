@@ -8,6 +8,9 @@ import { checkStatus, parseJSON } from './Helpers';
 import './Sticky.css';
 import './StickyEditor.css';
 
+// Frequency at which to sync the client<->server bit state.
+const UPDATE_INTERVAL = 10000;
+
 class BitEditor extends Component {
   constructor(props) {
     super(props);
@@ -102,7 +105,7 @@ class BitEditor extends Component {
   componentDidMount() {
     this.timerID = setInterval(
       () => this.updateBit(),
-      10000
+      UPDATE_INTERVAL
     );
   }
 
@@ -171,8 +174,7 @@ class BitEditor extends Component {
                 editorState={editorState}
                 onToggle={this.toggleInlineStyle}
               />
-              {/* <Full
-              <button onClick={this.toggleFullWindow} style=</button> */}
+              <button onClick={this.toggleFullWindow}>Full</button>
             </Sticky>
             <div className={className} onClick={this.focus}>
               <Editor
