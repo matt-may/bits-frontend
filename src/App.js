@@ -84,7 +84,6 @@ class BitBox extends Component {
   constructor(props) {
     super(props);
 
-
     this.state = { bits: [], loading: false, page: 1, numPages: 1 };
     this.buildPreviews();
   }
@@ -195,7 +194,7 @@ class BitBox extends Component {
                     containerHeight={250}
                     infiniteLoadBeginEdgeOffset={200}
                     onInfiniteLoad={this.handleLoad}
-                    //loadingSpinnerDelegate={this.loadingElem()}
+                    loadingSpinnerDelegate={this.loadingElem()}
                     isInfiniteLoading={this.state.loading}>
             {this.state.bits}
           </Infinite>
@@ -248,8 +247,8 @@ ReactDOM.render(
     <Route path='/' component={App}>
       <Route path='bits' component={BitContainer}>
         <IndexRoute component={BitSearch}/>
-        <Route path=':id' component={BitEditor} />
-        <Route path='new' component={BitEditor} />
+        {/* <Route path=':id' component={() => (<BitEditor createNew={true} />)} /> */}
+        <Route path='new' component={() => (<BitEditor newBit={true} />)} />
       </Route>
       <Route path='*' component={GenericNotFound} />
     </Route>

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Editor, EditorState, RichUtils, convertToRaw } from 'draft-js';
 import { StickyContainer, Sticky } from 'react-sticky';
-import constants from './Constants.js';
+
+import constants from './Constants';
+import { checkStatus, parseJSON } from './Helpers';
 
 import './Sticky.css';
 import './StickyEditor.css';
@@ -10,18 +12,36 @@ class BitEditor extends Component {
   constructor(props) {
     super(props);
 
-    if (props.createNew)
-      this.createNewBit()
+    // If we've been given the newBit prop, send a request to the backend to
+    // create a new bit. The backend will return the id of the new bit. Set
+    // this.bitID to that ID.
+    if (this.props.newBit)
+      this.createNewBit();
+    // If we haven't been told to create a new bit, set this.bitID to the
+    // specified already existing bitID. In this scenario, we are performing an
+    // edit of an existing bit, not creating a new one.
+    else {
+      this.bitID = this.props.bitID;
+    }
 
-    this.state = { editorState: EditorState.createEmpty(), fullWindow: false };
+    // Initialize our state.
+    // `fullWindow` specifies whether the editor is currently consuming the
+    //   full browser window.
+    // `inSync` specifies whether the server and client version of the bit
+    //   are in sync. Initially this will be true, however it will become
+    //   untrue as edits are made locally. Periodic calls to updateBit() will
+    //   update this to true.
+    this.state = { editorState: EditorState.createEmpty(),
+                   fullWindow: false, inSync: true };
 
     this.focus = () => this.refs.editor.focus();
 
     this.onChange = (editorState) => {
-      this.setState({ editorState });
+      this.setState({ editorState, inSync: false });
+      this.updateBit();
 
-      //console.log(editorState.getCurrentContent().getPlainText());
-      //console.log(convertToRaw(editorState.getCurrentContent()))
+      //console.log();
+      //console.log()
     }
 
     this.handleKeyCommand = (command) => this._handleKeyCommand(command);
@@ -65,26 +85,46 @@ class BitEditor extends Component {
   }
 
   _toggleFullWindow() {
-    this.setState((prevState) => (
-      { fullWindow: !prevState.fullWindow }
-    ));
+    this.setState((prevState) => {
+      return { fullWindow: !prevState.fullWindow }
+    });
   }
 
+  // Sends a request to our backend to create a new bit. If successful, sets
+  // this.bitID to the ID of the newly created bit.
   createNewBit() {
-    // fetch(createBitURI)
-    // .then((response) => {
-    //   return response.json();
-    // })
-    // .then((body) => {
-    //   let newItems = body.map((item) => {
-    //     return <BitPreview key={item.id} num={item.id} body={item.body} />;
-    //   });
-    //
-    //   if (concatItems)
-    //     newItems = this.state.items.concat(newItems);
-    //
-    //   that.setState({ items: newItems, loading: false });
-    // });
+    fetch(constants.BITS_PATH, { method: 'POST' })
+    .then(checkStatus)
+    .then(parseJSON)
+    .then((body) => {
+      this.bitID = body.id;
+    });
+  }
+
+  // Sends a request to our backend to update the bit. If successful, updates
+  // inSync in the state to true.
+  updateBit() {
+    if (!this.bitID)
+      return
+
+    let state = this.state.editorState;
+
+    fetch(constants.BITS_PATH + `/${this.bitID}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        bit: {
+          body: state.getCurrentContent().getPlainText(),
+          js_body: JSON.stringify(convertToRaw(state.getCurrentContent())),
+        }
+      })
+    })
+    .then(checkStatus)
+    .then(() => {
+      this.setState({ inSync: true });
+    });
   }
 
   render() {
@@ -117,6 +157,7 @@ class BitEditor extends Component {
               editorState={editorState}
               onToggle={this.toggleInlineStyle}
             />
+            <span>Insync is {this.state.inSync ? 'true' : 'false'}</span>
             {/* <Full
             <button onClick={this.toggleFullWindow} style=</button> */}
           </Sticky>
