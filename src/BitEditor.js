@@ -25,14 +25,17 @@ class BitEditor extends Component {
     if (this.props.newBit)
       this.createNewBit();
     // If we haven't been told to create a new bit, set this.bitID to the
-    // specified already existing bitID. In this scenario, we are performing an
-    // edit of an existing bit, not creating a new one.
-    else if (this.props.bitID) {
-      this.bitID = this.props.bitID;
-    }
-    else {
-      throw 'Error // Either the newBit prop or the bitID prop must be provided.'
-    }
+    // specified already existing bitID which was passed in via query params.
+    // In this scenario, we are performing an edit of an existing bit, not
+    // creating a new one.
+    else if (this.props.params)
+      this.bitID = this.props.params.bitID;
+    // If we haven't been given a newBit prop or a bitID prop, throw an error.
+    // This means we're not constructing a new bit, but we're also not editing
+    // an existing bit.
+    else
+      throw new Error('Either the newBit prop or the bitID prop must be ' +
+                      'provided.');
 
     // Initialize our state.
     //

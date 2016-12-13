@@ -64,8 +64,8 @@ class BitPreview extends Component {
   render() {
     return (
       <div className='infinite-list-item'>
-        <Markdown source={this.props.body + " " + this.props.num} />
-        {/* <Link to={`/bits/${this.props.num}`}>{this.props.body}</Link> */}
+        {/* <Markdown source={this.props.body + " " + this.props.num} /> */}
+        <Link to={`/bits/${this.props.num}`}>{this.props.body}</Link> (<span>{this.props.num}</span>)
       </div>
     );
   }
@@ -131,7 +131,7 @@ class BitBox extends Component {
         let bitBody = (bit._source) ? bit._source : bit;
 
         // Return a BitPreview.
-        return <BitPreview key={bitBody.id} num={bitBody.id} body={bitBody.body} />;
+        return <BitPreview key={bitBody.id} num={bitBody.id} body={bitBody.body.slice(0,30)} />;
       });
 
       // Concatenate if necessary
@@ -247,9 +247,8 @@ ReactDOM.render(
     <Route path='/' component={App}>
       <Route path='bits' component={BitContainer}>
         <IndexRoute component={BitSearch}/>
-        {/* <Route path=':id' component={() => (<BitEditor bit={true} />)} /> */}
-        {/* <Route path='new' component={() => (<BitEditor newBit={true} />)} /> */}
-        <Route path='new' component={() => (<BitEditor bitID="331" />)} />
+        <Route path='new' component={() => (<BitEditor newBit={true} />)} />
+        <Route path=':bitID' component={BitEditor} />
       </Route>
       <Route path='*' component={GenericNotFound} />
     </Route>
