@@ -118,14 +118,22 @@ class BitEditor extends Component {
   // On mounting, initiates a setInterval for sending updates to the bit from
   // the client to our backend. By default, we send updates every 10 seconds.
   componentDidMount() {
+    this.startUpdateTimer();
+  }
+
+  // Clears the update timer on unmount.
+  componentWillUnmount() {
+    this.clearUpdateTimer();
+  }
+
+  startUpdateTimer() {
     this.timerID = setInterval(
       () => this.updateBit(),
       UPDATE_INTERVAL
     );
   }
 
-  // Clears the update timer on unmount.
-  componentWillUnmount() {
+  clearUpdateTimer() {
     clearInterval(this.timerID);
   }
 
@@ -173,6 +181,12 @@ class BitEditor extends Component {
     });
   }
 
+  forceUpdate = () => {
+    this.updateBit();
+    this.clearUpdateTimer();
+    this.startUpdateTimer();
+  }
+
   render() {
     const { editorState } = this.state;
 
@@ -192,38 +206,37 @@ class BitEditor extends Component {
       wrapperClassName += ' editor-full-window';
 
     return (
-      <div>
-        <div className={wrapperClassName}>
-          <StickyContainer>
-            <Sticky stickyClassName='sticky editor-sticky'>
-              <BlockStyleControls
-                editorState={editorState}
-                onToggle={this.toggleBlockType}
-              />
-              <InlineStyleControls
-                editorState={editorState}
-                onToggle={this.toggleInlineStyle}
-              />
-              <button onClick={this.toggleFullWindow}>Full</button>
-            </Sticky>
-            <div className={className} onClick={this.focus}>
-              <Editor
-                blockStyleFn={getBlockStyle}
-                customStyleMap={styleMap}
-                editorState={editorState}
-                handleKeyCommand={this.handleKeyCommand}
-                onChange={this.onChange}
-                onTab={this.onTab}
-                placeholder='Write a new bit.'
-                ref='editor'
-                spellCheck={true}
-              />
-            </div>
-          </StickyContainer>
-        </div>
-        <span style={{ float: 'right', marginTop: '5px' }}>
-          {this.state.inSync ? 'Saved' : 'Saving...'}
-        </span>
+      <div className={wrapperClassName}>
+        <StickyContainer>
+          <Sticky stickyClassName='sticky editor-sticky'>
+            <BlockStyleControls
+              editorState={editorState}
+              onToggle={this.toggleBlockType}
+            />
+            <InlineStyleControls
+              editorState={editorState}
+              onToggle={this.toggleInlineStyle}
+            />
+            <button onClick={this.toggleFullWindow}>Full</button>
+            <button onClick={this.forceUpdate}>Save</button>
+            <span style={{ float: 'right', marginTop: '5px' }}>
+              {this.state.inSync ? 'Saved' : 'Saving...'}
+            </span>
+          </Sticky>
+          <div className={className} onClick={this.focus}>
+            <Editor
+              blockStyleFn={getBlockStyle}
+              customStyleMap={styleMap}
+              editorState={editorState}
+              handleKeyCommand={this.handleKeyCommand}
+              onChange={this.onChange}
+              onTab={this.onTab}
+              placeholder='Write a new bit.'
+              ref='editor'
+              spellCheck={true}
+            />
+          </div>
+        </StickyContainer>
       </div>
     );
   }
