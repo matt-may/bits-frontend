@@ -71,61 +71,108 @@ class BitPreview extends Component {
   }
 }
 
+/*
+ Component to contain bit previews.
+
+ If a search has been typed, the search is used to filter the previews. If
+ no search has been typed, the user's bits are pulled in descending order.
+
+ Fetches bit previews from the Rails backend, and renders them with draftJS.
+
+*/
 class BitBox extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { items: [], loading: false, page: 1, numPages: 1 };
-    this.buildPreviews({ newPage: 1 });
+
+    this.state = { bits: [], loading: false, page: 1, numPages: 1 };
+    this.buildPreviews();
   }
 
-  buildPreviews({ nextProps = null, newPage = null, concatItems = false } = {}) {
+  /*
+   Builds a list of bit previews for loading into an infinite scrolling
+   container.
+
+    Params:
+      `nextProps`: a props object, in case we need to have the latest props
+                   passed in before they've actually updated
+      `newPage`:  an integer page value, for paging through result lists from
+                  the backend
+      `concatBits`: whether to concatenate the bits that will be newly fetched
+                    with the existing bits in the state.
+
+  */
+  buildPreviews({ nextProps = null,
+                  newPage = null,
+                  concatBits = false } = {}) {
     let props = nextProps || this.props,
         page  = newPage   || this.state.page,
-        that  = this,
-        bitURI;
+        bitURI; // Our fetch URL
 
+    // If we have been given a query through our props,
     if (props.query)
+      // Fetch from the bits search endpoint
       bitURI = `${constants.BITS_SEARCH_PATH}?q=${props.query}&page=${page}`;
+    // If not,
     else
+      // Fetch from the bits index endpoint
       bitURI = `${constants.BITS_PATH}?page=${page}`;
 
+    // Fetch our new bits, build the bit previews if successful, and update
+    // the state
     fetch(bitURI)
     .then((response) => {
       return response.json();
     })
     .then((body) => {
-      console.log(body);
-
-      let newItems = body.bits.map((item) => {
-        return <BitPreview key={item.id} num={item.id} body={item.body} />;
+      // Construct our new previews
+      let newBits = body.bits.map((bit) => {
+        return <BitPreview key={bit.id} num={bit.id} body={bit.body} />;
       });
 
-      if (concatItems)
-        newItems = this.state.items.concat(newItems);
+      // Concatenate if necessary
+      if (concatBits)
+        newBits = this.state.bits.concat(newBits);
 
-      that.setState({ items: newItems, loading: false, numPages: body.numPages });
+      // Update state.
+      this.setState({ bits: newBits, loading: false,
+                      page: page, numPages: body.numPages });
     });
   }
 
+  // Called when new props are received
   componentWillReceiveProps(nextProps) {
+    // If our query has changed,
     if (this.props.query !== nextProps.query)
-      this.buildPreviews({ nextProps: nextProps });
+      // Update our bit previews. Reset the pager to 1, since we'll be starting
+      // with a brand new result set.
+      this.buildPreviews({ nextProps: nextProps, newPage: 1 });
   }
 
+  // Called on infinite load
   handleLoad = () => {
-    this.setState(function (prevState) {
+    this.setState((prevState) => {
+      // Increment our pager
       let newPage = prevState.page + 1;
 
+      // If the new pager value is greater than the number of pages in the
+      // result set, just return an empty object. We don't need to update the
+      // state.
       if (newPage > prevState.numPages)
         return {};
 
-      this.buildPreviews({ concatItems: true, newPage: newPage });
+      // Build new bit previews, updating the pager value and saying "yes" to
+      // whether the new bits should be concatenated with the existing bit
+      // list
+      this.buildPreviews({ concatBits: true, newPage: newPage });
 
-      return { loading: true, page: newPage };
+      // Update our state to have loading be true
+      return { loading: true };
     });
   }
 
+  // Shown when new elements are being loaded, specifically when 'loading'
+  // is set to true in the state
   loadingElem() {
     return (
       <div className='infinite-list-item'>
@@ -145,7 +192,7 @@ class BitBox extends Component {
                     onInfiniteLoad={this.handleLoad}
                     //loadingSpinnerDelegate={this.loadingElem()}
                     isInfiniteLoading={this.state.loading}>
-            {this.state.items}
+            {this.state.bits}
           </Infinite>
         </div>
       </div>
