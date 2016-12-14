@@ -22,10 +22,10 @@ function parseJSON(response) {
 // Attempts to retrieve the authentication token from the DOM. If it finds it,
 // returns the token value. Else, returns an empty string.
 function getAuthToken() {
-  let tokenElem = document.getElementById('auth_token');
+  let tokenElem = document.head.querySelector('[name="csrf-token"]');
 
   if (tokenElem)
-    return tokenElem.value;
+    return tokenElem.content;
   else
     return '';
 }
