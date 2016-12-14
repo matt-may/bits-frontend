@@ -131,7 +131,7 @@ class BitBox extends Component {
         let bitBody = (bit._source) ? bit._source : bit;
 
         // Return a BitPreview.
-        return <BitPreview key={bitBody.id} num={bitBody.id} body={bitBody.body.slice(0,30)} />;
+        return <BitPreview key={bitBody.unique_id} num={bitBody.unique_id} body={bitBody.body.slice(0,30)} />;
       });
 
       // Concatenate if necessary
