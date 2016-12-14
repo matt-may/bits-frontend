@@ -1,13 +1,15 @@
+import constants from './constants';
+
 function checkStatus(response, failHandler) {
   if (response.status >= 200 && response.status < 300) {
-    return response
+    return response;
   }
   else {
-    let error = new Error(response.statusText)
-    error.response = response
+    let error = new Error(response.statusText);
+    error.response = response;
 
     if (failHandler)
-      failHandler()
+      failHandler();
 
     throw error
   }
@@ -17,57 +19,68 @@ function parseJSON(response) {
   return response.json();
 }
 
-// Performs a fetch, including session data and an auth token for Rails
-function fetchWithSession(uri, options={}) {
-  // Attempt to find the auth token hidden input
-  let authToken = document.getElementById('auth_token'),
-      // We'll tell fetch to include cookies
-      credObj = { credentials: 'include' };
+// Attempts to retrieve the authentication token from the DOM. If it finds it,
+// returns the token value. Else, returns an empty string.
+function getAuthToken() {
+  let tokenElem = document.getElementById('auth_token');
 
-  // If we don't have an auth token (this will only be true in dev mode)
-  if (!authToken) {
-    // If a body has been given,
-    if (options.body)
-      // Stringify the body, since it will have been passed in as a JS object
-      // to allow for potential modification
-      options.body = JSON.stringify(options.body);
+  if (tokenElem)
+    return tokenElem.value;
+  else
+    return '';
+}
 
-    // Merge our session into the passed-in options
-    let mergedOptions = Object.assign(credObj, options);
+// Initiates a fetch, including session information
+function _fetchWithSession(uri, options={}) {
+  // If we're in production, we'll use 'same-origin' as the fetch 'credentials'
+  // option as we won't be making a CORS request. If we're in development mode,
+  // we will be, so use 'include'.
+  let credentials = constants.IN_PRODUCTION ? 'same-origin' : 'include';
 
-    // Fetch with the merged options and return
-    return fetch(uri, mergedOptions);
-  }
+  // Create an object containing the 'credentials' option for fetch
+  let credObj = { credentials: credentials };
 
-  // Grab the token value
-  let tokenValue = authToken.value;
-
-  // If we were passed in a body, or instructed to make a non-GET request,
-  // we will merge in the auth token into the body and JSON stringify it
-  if (options.body || options.method) {
-    // Initialize a body var to either the current body if specified or an empty
-    // object
-    let body = options.body || {};
-
-    // Merge the authenticity token in with the body, and JSON stringify it
-    options.body = JSON.stringify(
-                     Object.assign({ authenticity_token: tokenValue }, body)
-                   );
-
-    // Set headers to ensure the server knows we're sending JSON
-    options.headers = options.headers || {};
-    options.headers['Content-Type'] = 'application/json';
-  }
-
-  // Merge everything together, replacing the old body with the new
-  let mergedOptions = Object.assign(credObj, options);
+  // Merge the credentials option in with the existing options
+  let mergedOptions = Object.assign({}, credObj, options);
 
   // Fetch
   return fetch(uri, mergedOptions);
 }
 
+// Initiates a GET fetch, including cookies with the request
+function getFetch(uri) {
+  return _fetchWithSession(uri);
+}
+
+// Initiates a non-GET fetch, including the Rails authenticity token with the
+// request and converting the body into stringified JSON. Also sets the
+// appropriate content-type headers.
+function fetchWithTokenAsJson(uri, options={}) {
+  // Retrieve the authenticity token from the DOM. If it can't be found, it
+  // will just be empty. This will only be true in development mode, where we
+  // have Rails' token checking turned off.
+  let authToken = getAuthToken();
+
+  // Initialize a body var to either the current body if specified or an empty
+  // object
+  let body = options.body || {};
+
+  // Merge the authenticity token in with the body, and JSON stringify it
+  options.body = JSON.stringify(
+                   Object.assign({ authenticity_token: authToken }, body)
+                 );
+
+  // Set headers to ensure the server knows we're sending JSON
+  options.headers = options.headers || {};
+  options.headers['Content-Type'] = 'application/json';
+
+  // Fetch
+  return _fetchWithSession(uri, options);
+}
+
 module.exports = {
   checkStatus: checkStatus,
   parseJSON: parseJSON,
-  fetchWithSession: fetchWithSession
+  getFetch: getFetch,
+  fetchWithTokenAsJson: fetchWithTokenAsJson
 }

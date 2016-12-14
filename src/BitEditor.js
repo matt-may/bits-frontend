@@ -3,7 +3,7 @@ import { Editor, EditorState, ContentState, RichUtils, convertFromRaw, convertTo
 import { StickyContainer, Sticky } from 'react-sticky';
 
 import constants from './constants';
-import { checkStatus, parseJSON, fetchWithSession } from './helpers';
+import { checkStatus, parseJSON, getFetch, fetchWithTokenAsJson } from './helpers';
 
 import './Sticky.css';
 import './StickyEditor.css';
@@ -107,7 +107,7 @@ class BitEditor extends Component {
   // Sends a request to our backend to create a new bit. If successful, sets
   // this.bitID to the ID of the newly created bit.
   createNewBit() {
-    fetchWithSession(constants.BITS_PATH, { method: 'POST' })
+    fetchWithTokenAsJson(constants.BITS_PATH, { method: 'POST' })
     .then(checkStatus)
     .then(parseJSON)
     .then((body) => {
@@ -141,7 +141,7 @@ class BitEditor extends Component {
     if (!this.bitID)
       return
 
-    fetchWithSession(constants.BITS_PATH + `/${this.bitID}`)
+    getFetch(constants.BITS_PATH + `/${this.bitID}`)
     .then(checkStatus)
     .then(parseJSON)
     .then((body) => {
@@ -170,11 +170,8 @@ class BitEditor extends Component {
     let state = this.state.editorState;
 
     // Post the most recent state of our bit to the server
-    fetchWithSession(constants.BITS_PATH + `/${this.bitID}`, {
+    fetchWithTokenAsJson(constants.BITS_PATH + `/${this.bitID}`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
       body: {
         bit: {
           body: state.getCurrentContent().getPlainText(),

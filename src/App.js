@@ -10,7 +10,7 @@ import Infinite from 'react-infinite';
 import 'whatwg-fetch';
 import BitEditor from './BitEditor';
 import constants from './constants';
-import { fetchWithSession } from './helpers';
+import { getFetch } from './helpers';
 
 // CSS files
 import './index.css';
@@ -120,7 +120,7 @@ class BitBox extends Component {
 
     // Fetch our new bits, build the bit previews if successful, and update
     // the state
-    fetchWithSession(bitURI)
+    getFetch(bitURI)
     .then((response) => {
       return response.json();
     })
