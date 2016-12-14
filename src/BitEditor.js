@@ -145,10 +145,18 @@ class BitEditor extends Component {
     .then(checkStatus)
     .then(parseJSON)
     .then((body) => {
-      let rawData = JSON.parse(body.js_body);
-      let contentState = convertFromRaw(rawData);
+      let editorState;
 
-      this.setState({ editorState: EditorState.createWithContent(contentState) });
+      if (body.js_body) {
+        let rawData = JSON.parse(body.js_body);
+        let contentState = convertFromRaw(rawData);
+        editorState = EditorState.createWithContent(contentState);
+      }
+      else {
+        editorState = EditorState.createEmpty();
+      }
+
+      this.setState({ editorState: editorState });
     });
   }
 
@@ -167,12 +175,12 @@ class BitEditor extends Component {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
+      body: {
         bit: {
           body: state.getCurrentContent().getPlainText(),
           js_body: JSON.stringify(convertToRaw(state.getCurrentContent())),
         }
-      })
+      }
     })
     .then(checkStatus)
     .then(() => {
