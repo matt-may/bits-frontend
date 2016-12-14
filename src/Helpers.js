@@ -42,19 +42,21 @@ function fetchWithSession(uri, options={}) {
   // Grab the token value
   let tokenValue = authToken.value;
 
-  // If we were passed in a body, it should be in object form. We'll merge in
-  // the auth token and JSON stringify it
-  if (options.body)
+  // If we were passed in a body, or instructed to make a non-GET request,
+  // we will merge in the auth token into the body and JSON stringify it
+  if (options.body || options.method) {
+    // Initialize a body var to either the current body if specified or an empty
+    // object
+    let body = options.body || {};
+
     // Merge the authenticity token in with the body, and JSON stringify it
-    options.body = JSON.stringify(Object.assign({ authenticity_token: tokenValue },
-                                                options.body));
-  // If we weren't given a body, and a method has been specified (meaning it's
-  // a non-GET request)
-  else if (!options.body && options.method) {
-    // Set the auth token in the body, and set the headers so the server knows
-    // we're sending JSON.
-    options.body = JSON.stringify({ authenticity_token: tokenValue });
-    options.headers = { 'Content-Type': 'application/json' };
+    options.body = JSON.stringify(
+                     Object.assign({ authenticity_token: tokenValue }, body)
+                   );
+
+    // Set headers to ensure the server knows we're sending JSON
+    options.headers = options.headers || {};
+    options.headers['Content-Type'] = 'application/json';
   }
 
   // Merge everything together, replacing the old body with the new
