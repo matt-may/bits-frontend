@@ -9,7 +9,8 @@ import Infinite from 'react-infinite';
 // Fetch polyfill
 import 'whatwg-fetch';
 import BitEditor from './BitEditor';
-import constants from './Constants';
+import constants from './constants';
+import { fetchWithSession } from './helpers';
 
 // CSS files
 import './index.css';
@@ -95,8 +96,8 @@ class BitBox extends Component {
     Params:
       `nextProps`: a props object, in case we need to have the latest props
                    passed in before they've actually updated
-      `newPage`:  an integer page value, for paging through result lists from
-                  the backend
+      `newPage`: an integer page value, for paging through result lists from
+                 the backend
       `concatBits`: whether to concatenate the bits that will be newly fetched
                     with the existing bits in the state.
 
@@ -119,7 +120,7 @@ class BitBox extends Component {
 
     // Fetch our new bits, build the bit previews if successful, and update
     // the state
-    fetch(bitURI)
+    fetchWithSession(bitURI)
     .then((response) => {
       return response.json();
     })

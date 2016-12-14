@@ -17,7 +17,15 @@ function parseJSON(response) {
   return response.json();
 }
 
+function fetchWithSession(uri, options={}) {
+  var sessionObj = { credentials: 'include' };
+  var mergedOptions = Object.assign(sessionObj, options);
+
+  return fetch(uri, mergedOptions);
+}
+
 module.exports = {
   checkStatus: checkStatus,
-  parseJSON: parseJSON
+  parseJSON: parseJSON,
+  fetchWithSession: fetchWithSession
 }
