@@ -152,7 +152,7 @@ Intro
 }
 .intro header h2 {
   position: relative;
-  background: #0d2c40 url(icon-star.svg) no-repeat left bottom;
+  background: #0d2c40 url("/icon-star.svg") no-repeat left bottom;
   background-size: 101%;
   float: right;
   color: #ffffff;
@@ -168,7 +168,7 @@ Intro
 }
   @media (max-width: 70em) {
     .intro header h2 {
-      background: #0d2c40 url(icon-star.svg) no-repeat left bottom;
+      background: #0d2c40 url("/icon-star.svg") no-repeat left bottom;
       background-size: 49%;
       width: 66.666%;
       height: 11em;
@@ -177,7 +177,7 @@ Intro
   }
   @media (max-width: 53em) {
     .intro header h2 {
-      background: #0d2c40 url(icon-star.svg) no-repeat left bottom;
+      background: #0d2c40 url("/icon-star.svg") no-repeat left bottom;
       background-size: 49%;
       font-size: 200%;
       width: 66.666%;
@@ -190,7 +190,7 @@ Intro
   color: #ffffff;
   width: 60%;
   float: left;
-  background: #c879b2 url(icons-3-pack.svg);
+  background: #c879b2 url("/icons-3-pack.svg");
   background-repeat: no-repeat;
   background-position: center bottom;
   background-size: 101%;
@@ -310,7 +310,7 @@ Main
 ==========================================================================
 */
 .main {
-  background: url(mid-century-1.jpg) no-repeat center center;
+  background: url("/mid-century-1.jpg")) no-repeat center center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -366,7 +366,7 @@ Main
     }
   }
 .main .explanation {
-  background: #0d2c40 url(icon-half.svg);
+  background: #0d2c40 url("/icon-half.svg");
   background-repeat: no-repeat;
   background-position: right center;
   background-size: 40%;
@@ -472,7 +472,7 @@ Main
   font-size: 150%;
 }
 .main .benefits {
-  background: rgba(0, 188, 217, 0.8) url(icon-circles.svg) no-repeat left top;
+  background: rgba(0, 188, 217, 0.8) url("/icon-circles.svg") no-repeat left top;
   background-size: 100%;
   position: absolute;
   right: 20%;
@@ -495,7 +495,7 @@ Main
   }
   @media (max-width: 53em) {
     .main .benefits {
-      background: rgba(0, 188, 217, 0.8) url(icon-circles.svg) no-repeat center top;
+      background: rgba(0, 188, 217, 0.8) url("/icon-circles.svg") no-repeat center top;
       background-size: 33%;
       position: relative;
       right: 0;
@@ -506,7 +506,7 @@ Main
   }
   @media (max-width: 33em) {
     .main .benefits {
-      background: rgba(0, 188, 217, 0.8) url(icon-circles.svg) no-repeat center top;
+      background: rgba(0, 188, 217, 0.8) url("/icon-circles.svg") no-repeat center top;
       background-size: 33%;
       position: relative;
       right: 0;
@@ -596,7 +596,7 @@ Main
   position: absolute;
   top: 0;
   left: -60%;
-  background: url(mid-century-2.jpg) no-repeat left center;
+  background: url("/mid-century-2.jpg")) no-repeat left center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -905,7 +905,7 @@ Sidebar
   text-align: left;
 }
 .sidebar .zen-resources {
-  background: #31c5da url(icon-circles.svg) no-repeat left bottom;
+  background: #31c5da url("/icon-circles.svg") no-repeat left bottom;
   background-size: 100%;
   position: relative;
   z-index: 2;
@@ -925,7 +925,7 @@ Sidebar
   }
   @media (max-width: 53em) {
     .sidebar .zen-resources {
-      background: #31c5da url(icon-circles.svg) no-repeat center bottom;
+      background: #31c5da url("/icon-circles.svg") no-repeat center bottom;
       background-size: 35%;
       width: 100%;
       margin: 0;
