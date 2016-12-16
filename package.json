@@ -20,7 +20,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "deploy": "yarn run build && rm /Users/mbmay/bits-backend/app/assets/javascripts/react/* && cp ./build/static/js/* /Users/mbmay/bits-backend/app/assets/javascripts/react/ && cp ./build/static/css/*.css /Users/mbmay/bits-backend/app/assets/stylesheets/react/",
+    "deploy": "yarn run build && rm /Users/mbmay/bits-backend/app/assets/javascripts/react/* && cp ./build/static/js/* /Users/mbmay/bits-backend/app/assets/javascripts/react/ && rm /Users/mbmay/bits-backend/app/assets/stylesheets/react/* && cp ./build/static/css/* /Users/mbmay/bits-backend/app/assets/stylesheets/react/",
     "flow": "flow; test $? -eq 0 -o $? -eq 2"
   }
 }
