@@ -13,7 +13,7 @@ import constants from './constants';
 import { getFetch } from './helpers';
 
 // CSS files
-import './index.css';
+import './theme.css';
 import './App.css';
 import './Draft.css';
 import './RichEditor.css';
