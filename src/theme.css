@@ -311,7 +311,7 @@ Main
 ==========================================================================
 */
 .main {
-  background: url("/mid-century-1.jpg")) no-repeat center center;
+  background: url("/mid-century-1.jpg") no-repeat center center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -597,7 +597,7 @@ Main
   position: absolute;
   top: 0;
   left: -60%;
-  background: url("/mid-century-2.jpg")) no-repeat left center;
+  background: url("/mid-century-2.jpg") no-repeat left center;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -980,18 +980,17 @@ Sidebar
   text-align: left;
 }
 
+/* Customizations */
 .zen-button {
   border: 3px solid #0d2c40;
   padding: 15px;
   background: none;
   color: #0d2c40;
 }
-
 .page-footer {
   height: 4em;
   text-align: center;
 }
-
 .page-footer p {
   margin-top: 2em;
 }
