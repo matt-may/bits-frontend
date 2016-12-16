@@ -222,8 +222,8 @@ class BitEditor extends Component {
               editorState={editorState}
               onToggle={this.toggleInlineStyle}
             />
-            <button onClick={this.toggleFullWindow}>Full</button>
-            <button onClick={this.forceUpdate}>Save</button>
+            <button className='button button-outline' onClick={this.toggleFullWindow}>Full</button>
+            <button className='button button-outline' onClick={this.forceUpdate}>Save</button>
             <span style={{ float: 'right', marginTop: '5px' }}>
               {this.state.inSync ? 'Saved' : 'Saving...'}
             </span>

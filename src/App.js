@@ -13,7 +13,10 @@ import constants from './constants';
 import { getFetch } from './helpers';
 
 // CSS files
-import './theme.css';
+// import './static-theme.css';
+import './normalize.css';
+import './milligram.css';
+// import './theme.css';
 import './App.css';
 import './Draft.css';
 import './RichEditor.css';
@@ -33,7 +36,7 @@ class BitSearch extends Component {
       <div>
         <NewBitButton />
         <div>
-          <input type='text' value={this.state.value} onChange={this.handleChange} />
+          <input type='text' value={this.state.value} onChange={this.handleChange} placeholder='Search your bits.' />
         </div>
         <BitBox query={this.state.value} />
       </div>
@@ -44,7 +47,7 @@ class BitSearch extends Component {
 class NewBitButton extends Component {
   render() {
     return (
-      <Link to={`/bits/new`} className='btn btn-black'>New Bit</Link>
+      <Link to={`/bits/new`} className='button button-outline'>Write New Bit</Link>
     );
   }
 }
@@ -65,8 +68,9 @@ class BitPreview extends Component {
   render() {
     return (
       <div className='infinite-list-item'>
-        {/* <Markdown source={this.props.body + " " + this.props.num} /> */}
-        <Link to={`/bits/${this.props.num}`}>{this.props.body}</Link> (<span>{this.props.num}</span>)
+        <blockquote>
+          <p><Link to={`/bits/${this.props.num}`}>{this.props.body}</Link></p>
+        </blockquote>
       </div>
     );
   }
@@ -192,7 +196,7 @@ class BitBox extends Component {
         <div className='infinite'>
           <Infinite elementHeight={40}
                     useWindowAsScrollContainer
-                    containerHeight={250}
+                    // containerHeight={250}
                     infiniteLoadBeginEdgeOffset={200}
                     onInfiniteLoad={this.handleLoad}
                     loadingSpinnerDelegate={this.loadingElem()}
@@ -209,9 +213,8 @@ class App extends Component {
   render() {
     return (
       <div className='app'>
-        <h1>App</h1>
         <div className='header'>
-          <Link to='/bits'>Bits</Link>
+          {/* <Link to='/bits'>Bits</Link> */}
         </div>
         <div>
           {this.props.children}
@@ -224,9 +227,12 @@ class App extends Component {
 class BitContainer extends Component {
   render() {
     return (
-      <div>
-        {this.props.children}
-      </div>
+      <section>
+        <h1>Bits</h1>
+        <div>
+          {this.props.children}
+        </div>
+      </section>
     );
   }
 }
@@ -246,6 +252,7 @@ class GenericNotFound extends Component {
 ReactDOM.render(
   <Router history={browserHistory}>
     <Route path='/' component={App}>
+      <IndexRoute component={BitSearch}/>
       <Route path='bits' component={BitContainer}>
         <IndexRoute component={BitSearch}/>
         <Route path='new' component={() => (<BitEditor newBit={true} />)} />
