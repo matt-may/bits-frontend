@@ -47,7 +47,7 @@ class BitSearch extends Component {
 class NewBitButton extends Component {
   render() {
     return (
-      <Link to={`/bits/new`} className='button button-outline'>Write New Bit</Link>
+      <Link to={`/bits/new`} className='button button-black button-outline'>Write New Bit</Link>
     );
   }
 }
@@ -69,7 +69,15 @@ class BitPreview extends Component {
     return (
       <div className='infinite-list-item'>
         <blockquote>
-          <p><Link to={`/bits/${this.props.num}`}>{this.props.body}</Link></p>
+          <p>
+            <Link to={`/bits/${this.props.num}`}>
+              {
+                (this.props.body && this.props.body.length) ?
+                 this.props.body :
+                 'Empty bit :-)'
+              }
+            </Link>
+          </p>
         </blockquote>
       </div>
     );

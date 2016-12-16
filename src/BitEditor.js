@@ -19,13 +19,12 @@ class BitEditor extends Component {
   constructor(props) {
     super(props);
 
-    // If we've been given the newBit prop, send a request to the backend to
-    // create a new bit. The backend will return the id of the new bit. Set
-    // this.bitID to that ID.
+    // If we've been given the newBit prop, initialize a property that will tell
+    // us whether we've been assigned a bit ID from the server.
     if (this.props.newBit)
-      this.createNewBit();
+      this.bitID = null;
     // If we haven't been told to create a new bit, set this.bitID to the
-    // specified already existing bitID which was passed in via query params.
+    // specified pre-existing bitID which was passed in via query params.
     // In this scenario, we are performing an edit of an existing bit, not
     // creating a new one.
     else if (this.props.params)
@@ -55,7 +54,14 @@ class BitEditor extends Component {
     this.focus = () => this.refs.editor.focus();
 
     this.onChange = (editorState) => {
+      // Update editor state
       this.setState({ editorState, inSync: false });
+
+      // If we haven't been assigned a bit ID and we're not already in the
+      // process of creating a new bit, check to see if there's text in the
+      // editor, and if so create a new bit.
+      if (!this.bitID && !this.creatingBitNow)
+        this.potentiallyCreateNewBit(editorState);
     }
 
     this.handleKeyCommand = (command) => this._handleKeyCommand(command);
@@ -102,6 +108,18 @@ class BitEditor extends Component {
     this.setState((prevState) => {
       return { fullWindow: !prevState.fullWindow }
     });
+  }
+
+  // Checks the editor for non-empty text. If some text is found, we set a flag
+  // indicating that we're in the process of requesting a bit ID from the server,
+  // and we initiate that process.
+  potentiallyCreateNewBit(editorState) {
+    let editorText = editorState.getCurrentContent().getPlainText();
+
+    if (editorText.length > 0) {
+      this.creatingBitNow = true;
+      this.createNewBit();
+    }
   }
 
   // Sends a request to our backend to create a new bit. If successful, sets
@@ -164,9 +182,15 @@ class BitEditor extends Component {
   // inSync in the state to true.
   updateBit() {
     // Return if we have no bit ID to update, or we're already in sync.
-    if (!this.bitID || this.state.inSync)
-      return
+    if (!this.bitID) {
+      this.setState({ inSync: true })
+      return;
+    }
 
+    if (this.state.inSync)
+      return;
+
+    // Retrieve the editor state.
     let state = this.state.editorState;
 
     // Post the most recent state of our bit to the server
