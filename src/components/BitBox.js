@@ -28,6 +28,7 @@ class BitBox extends Component {
     // don't, we'll want to show a message instead). Assume we have bits,
     // so initialize to true.
     this.hasBits = true;
+    // Create our bit previews.
     this.buildPreviews();
   }
 
@@ -87,12 +88,12 @@ class BitBox extends Component {
       if (concatBits)
         newBits = this.state.bits.concat(newBits);
 
+      // Update the `hasBits` property indicating whether we have bits to show.
+      this.hasBits = (newBits.length > 0);
+
       // Update state.
       this.setState({ bits: newBits, loading: false, page: page,
                       numPages: body.num_pages, fetchType: fetchType });
-
-      // Update the `hasBits` property indicating whether we have bits to show.
-      this.hasBits = (newBits.length > 0);
     });
   }
 
