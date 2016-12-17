@@ -26,3 +26,11 @@ a {
 .navbar .user-name {
   margin-left: 0.5rem;
 }
+
+.card-preview {
+  font-family: Georgia, serif;
+}
+
+.card-preview:hover {
+  cursor: pointer;
+}

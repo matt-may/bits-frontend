@@ -24,6 +24,10 @@ class BitBox extends Component {
 
     this.state = { bits: [], loading: false, page: 1, numPages: 1,
                    fetchType: 'index' };
+    // Store a flag that will tell us whether we have to bits to show (if we
+    // don't, we'll want to show a message instead). Assume we have bits,
+    // so initialize to true.
+    this.hasBits = true;
     this.buildPreviews();
   }
 
@@ -86,10 +90,13 @@ class BitBox extends Component {
       // Update state.
       this.setState({ bits: newBits, loading: false, page: page,
                       numPages: body.num_pages, fetchType: fetchType });
+
+      // Update the `hasBits` property indicating whether we have bits to show.
+      this.hasBits = (newBits.length > 0);
     });
   }
 
-  // Called when new props are received
+  // Called when new props are received.
   componentWillReceiveProps(nextProps) {
     // If our query has changed,
     if (this.props.query !== nextProps.query)
@@ -98,7 +105,7 @@ class BitBox extends Component {
       this.buildPreviews({ nextProps: nextProps, newPage: 1 });
   }
 
-  // Called on infinite load
+  // Called on infinite load.
   handleLoad = () => {
     this.setState((prevState) => {
       // Increment our pager.
@@ -134,23 +141,23 @@ class BitBox extends Component {
     return (
       <div>
         {
-          (this.state.bits.length) ?
-          <div className='infinite'>
-            <Infinite elementHeight={40}
-                      useWindowAsScrollContainer
-                      infiniteLoadBeginEdgeOffset={200}
-                      onInfiniteLoad={this.handleLoad}
-                      loadingSpinnerDelegate={this.loadingElem()}
-                      isInfiniteLoading={this.state.loading}>
-              {this.state.bits}
-            </Infinite>
-          </div> :
-          <p className='lead'>
-            { (this.state.fetchType == 'index') ?
-              <span>Welcome to Bits! <Link to='/bits/new'>Create your first bit</Link></span> :
-              <span>No results for <u><em>{this.props.query}</em></u></span>
-            }.
-          </p>
+          (this.hasBits)
+          ? <div className='infinite'>
+              <Infinite elementHeight={86}
+                        useWindowAsScrollContainer
+                        infiniteLoadBeginEdgeOffset={200}
+                        onInfiniteLoad={this.handleLoad}
+                        loadingSpinnerDelegate={this.loadingElem()}
+                        isInfiniteLoading={this.state.loading}>
+                {this.state.bits}
+              </Infinite>
+            </div>
+          : <p className='lead'>
+              { (this.state.fetchType == 'index')
+                ? <span>Welcome to Bits! <Link to='/bits/new'>Create your first bit</Link></span>
+                : <span>No results for <u><em>{this.props.query}</em></u></span>
+              }.
+            </p>
         }
       </div>
     );

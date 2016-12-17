@@ -1,21 +1,25 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router';
+import { browserHistory } from 'react-router';
 
 class BitPreview extends Component {
+  openBit = (e) => {
+    browserHistory.push(`/bits/${this.props.num}`);
+  }
+
   render() {
     return (
       <div className='infinite-list-item'>
-        <blockquote>
-          <p>
-            <Link to={`/bits/${this.props.num}`}>
+        <div onClick={this.openBit} className='card card-block card-preview'>
+          <p className='card-text'>
+            <span>
               {
-                (this.props.body && this.props.body.length) ?
-                 this.props.body :
-                 'Empty bit :-)'
+                (this.props.body && this.props.body.length)
+                ? this.props.body
+                : 'Empty bit :-)'
               }
-            </Link>
+            </span>
           </p>
-        </blockquote>
+        </div>
       </div>
     );
   }
