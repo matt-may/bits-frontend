@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Editor, EditorState, ContentState, RichUtils, convertFromRaw, convertToRaw } from 'draft-js';
-import { StickyContainer, Sticky } from 'react-sticky';
 
 import constants from '../constants';
 import { checkStatus, parseJSON, getFetch, fetchWithTokenAsJson } from '../helpers';
@@ -263,36 +262,32 @@ class BitEditor extends Component {
 
     return (
       <div className={wrapperClassName}>
-        <StickyContainer>
-          <Sticky stickyClassName='sticky editor-sticky'>
-            <BlockStyleControls
-              editorState={editorState}
-              onToggle={this.toggleBlockType}
-            />
-            <InlineStyleControls
-              editorState={editorState}
-              onToggle={this.toggleInlineStyle}
-            />
-            <button className='btn btn-sm btn-secondary mr-1' onClick={this.toggleFullWindow}>Full</button>
-            <button className='btn btn-sm btn-secondary' onClick={this.forceUpdate}>Save</button>
-            <span className='text-muted float-xs-right'>
-              {this.state.inSync ? 'Saved' : 'Saving...'}
-            </span>
-          </Sticky>
-          <div className={className} onClick={this.focus}>
-            <Editor
-              blockStyleFn={getBlockStyle}
-              customStyleMap={styleMap}
-              editorState={editorState}
-              handleKeyCommand={this.handleKeyCommand}
-              onChange={this.onChange}
-              onTab={this.onTab}
-              placeholder='Write a new bit.'
-              ref='editor'
-              spellCheck={true}
-            />
-          </div>
-        </StickyContainer>
+        <BlockStyleControls
+          editorState={editorState}
+          onToggle={this.toggleBlockType}
+        />
+        <InlineStyleControls
+          editorState={editorState}
+          onToggle={this.toggleInlineStyle}
+        />
+        <button className='btn btn-sm btn-secondary mr-1' onClick={this.toggleFullWindow}>Full</button>
+        <button className='btn btn-sm btn-secondary' onClick={this.forceUpdate}>Save</button>
+        <span className='text-muted float-xs-right'>
+          {this.state.inSync ? 'Saved' : 'Saving...'}
+        </span>
+        <div className={className} onClick={this.focus}>
+          <Editor
+            blockStyleFn={getBlockStyle}
+            customStyleMap={styleMap}
+            editorState={editorState}
+            handleKeyCommand={this.handleKeyCommand}
+            onChange={this.onChange}
+            onTab={this.onTab}
+            placeholder='Write a new bit.'
+            ref='editor'
+            spellCheck={true}
+          />
+        </div>
       </div>
     );
   }
