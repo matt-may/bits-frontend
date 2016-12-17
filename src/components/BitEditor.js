@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { Editor, EditorState, ContentState, RichUtils, convertFromRaw, convertToRaw } from 'draft-js';
 import { StickyContainer, Sticky } from 'react-sticky';
 
-import constants from './constants';
-import { checkStatus, parseJSON, getFetch, fetchWithTokenAsJson } from './helpers';
+import constants from '../constants';
+import { checkStatus, parseJSON, getFetch, fetchWithTokenAsJson } from '../helpers';
 
-import './Sticky.css';
-import './StickyEditor.css';
+import '../styles/BitEditor.css';
+import '../styles/sticky.css';
 
 // Frequency at which to sync the client<->server bit state.
 const UPDATE_INTERVAL = 10000;
