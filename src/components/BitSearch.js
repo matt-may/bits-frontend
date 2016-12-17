@@ -26,14 +26,14 @@ class BitSearch extends Component {
         <h1 className='mb-2'>My Bits</h1>
         <div className='row'>
           <div className='col-md-4'>
-            <NewBitButton className='btn btn-outline-secondary mb-1' />
+            <NewBitButton className='btn btn-secondary mb-1' />
             <div className='mb-1'>
               <input type='text' value={this.state.value} onChange={this.handleChange}
                      placeholder='Search your bits.' className='form-control' />
             </div>
             <BitBox query={this.state.value} />
           </div>
-          <div className='col-md-8'>
+          <div className='col-md-8 hidden-xs-down'>
             <BitEditor newBit={newBit} bitID={bitID} />
           </div>
         </div>
