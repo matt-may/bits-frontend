@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Infinite from 'react-infinite';
 
 import BitPreview from './BitPreview';
+import NewBitButton from './NewBitButton';
 import constants from '../constants';
 import { getFetch } from '../helpers';
 
@@ -124,17 +125,21 @@ class BitBox extends Component {
   render() {
     return (
       <div>
-        <div className='infinite'>
-          <Infinite elementHeight={40}
-                    useWindowAsScrollContainer
-                    // containerHeight={250}
-                    infiniteLoadBeginEdgeOffset={200}
-                    onInfiniteLoad={this.handleLoad}
-                    loadingSpinnerDelegate={this.loadingElem()}
-                    isInfiniteLoading={this.state.loading}>
-            {this.state.bits}
-          </Infinite>
-        </div>
+        { (this.state.bits.length) ?
+            <div className='infinite'>
+              <Infinite elementHeight={40}
+                        useWindowAsScrollContainer
+                        infiniteLoadBeginEdgeOffset={200}
+                        onInfiniteLoad={this.handleLoad}
+                        loadingSpinnerDelegate={this.loadingElem()}
+                        isInfiniteLoading={this.state.loading}>
+                {this.state.bits}
+              </Infinite>
+            </div>
+          : <p className="lead mt-1">
+              No bits yet. Go ahead and <NewBitButton>create one</NewBitButton>!
+            </p>
+        }
       </div>
     );
   }

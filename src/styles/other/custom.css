@@ -6,10 +6,19 @@
   color: rgb(55, 58, 60);
 }*/
 
+html,
+body {
+  font-family: 'Source Sans Pro', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
 #content {
   margin-top: 80px;
 }
 
 .navbar .navbar-brand {
   line-height: 54px;
+}
+
+.navbar .user-name {
+  margin-left: 0.5rem;
 }

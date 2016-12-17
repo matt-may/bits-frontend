@@ -16,7 +16,8 @@ class BitSearch extends Component {
   render() {
     return (
       <div>
-        <NewBitButton />
+        <h1 className="my-2">My Bits</h1>
+        <NewBitButton className="btn btn-outline-secondary mb-1" />
         <div>
           <input type='text' value={this.state.value} onChange={this.handleChange}
                  placeholder='Search your bits.' className='form-control' />

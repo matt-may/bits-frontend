@@ -4,7 +4,9 @@ import { Link } from 'react-router';
 class NewBitButton extends Component {
   render() {
     return (
-      <Link to={`/bits/new`} className='btn btn-outline-secondary'>Write New Bit</Link>
+      <Link to={`/bits/new`} className={this.props.className}>
+        {(this.props.children) ? this.props.children : 'Write New Bit'}
+      </Link>
     );
   }
 }
