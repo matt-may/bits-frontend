@@ -5,6 +5,8 @@ import BitPreview from './BitPreview';
 import constants from '../constants';
 import { getFetch } from '../helpers';
 
+import '../styles/other/infinite.css';
+
 /*
  Component to contain bit previews.
 

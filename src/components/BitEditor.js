@@ -5,8 +5,9 @@ import { StickyContainer, Sticky } from 'react-sticky';
 import constants from '../constants';
 import { checkStatus, parseJSON, getFetch, fetchWithTokenAsJson } from '../helpers';
 
-import '../styles/BitEditor.css';
-import '../styles/sticky.css';
+import '../styles/other/draft.css';
+import '../styles/other/rich_editor.css';
+import '../styles/other/sticky.css';
 
 // Frequency at which to sync the client<->server bit state.
 const UPDATE_INTERVAL = 10000;

@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
-// import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-
-// Fetch polyfill
 import 'whatwg-fetch';
+// import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 // Components
 import BitContainer from './BitContainer';
@@ -13,9 +11,8 @@ import BitSearch from './BitSearch';
 import GenericNotFound from './GenericNotFound';
 
 // CSS
-import '../styles/App.css';
-import '../styles/Draft.css';
-import '../styles/RichEditor.css';
+import '../styles/other/bootstrap.css';
+import '../styles/other/custom.css';
 
 class App extends Component {
   render() {
