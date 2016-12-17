@@ -25,10 +25,12 @@ class BitEditor extends Component {
     if (this.props.newBit)
       this.bitID = null;
     // If we haven't been told to create a new bit, set this.bitID to the
-    // specified pre-existing bitID which was passed in via query params.
-    // In this scenario, we are performing an edit of an existing bit, not
-    // creating a new one.
-    else if (this.props.params)
+    // specified pre-existing bitID which was passed in via props or query
+    // params. In this scenario, we are performing an edit of an existing bit,
+    // not creating a new one.
+    else if (this.props.bitID)
+      this.bitID = this.props.bitID;
+    else if (this.props.params.bitID)
       this.bitID = this.props.params.bitID;
     // If we haven't been given a newBit prop or a bitID prop, throw an error.
     // This means we're not constructing a new bit, but we're also not editing
@@ -133,6 +135,22 @@ class BitEditor extends Component {
     .then((body) => {
       this.bitID = body.id;
     });
+  }
+
+  // Handles when we receive new props
+  componentWillReceiveProps(nextProps) {
+    // If the bit ID has changed, for example when the bit is clicked in the
+    // left sidebar,
+    if (nextProps.bitID !== this.bitID) {
+      // Clear our existing update timer.
+      this.clearUpdateTimer();
+      // Set our new bit ID.
+      this.bitID = nextProps.bitID;
+      // Boot up our editor.
+      this.initializeEditorState();
+      // Start a new update timer.
+      this.startUpdateTimer();
+    }
   }
 
   // On mounting, initiates a setInterval for sending updates to the bit from

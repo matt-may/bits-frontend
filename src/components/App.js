@@ -37,7 +37,7 @@ ReactDOM.render(
       <Route path='bits' component={BitContainer}>
         <IndexRoute component={BitSearch}/>
         <Route path='new' component={() => (<BitEditor newBit={true} />)} />
-        <Route path=':bitID' component={BitEditor} />
+        <Route path=':bitID' component={BitSearch} />
       </Route>
       <Route path='*' component={GenericNotFound} />
     </Route>
