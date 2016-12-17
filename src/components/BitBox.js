@@ -21,21 +21,26 @@ class BitBox extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { bits: [], loading: false, page: 1, numPages: 1 };
+    this.state = { bits: [], loading: false, page: 1, numPages: 1,
+                   fetchType: 'index' };
     this.buildPreviews();
+  }
+
+  componentDidMount() {
+
   }
 
   /*
    Builds a list of bit previews for loading into an infinite scrolling
    container.
 
-    Params:
-      `nextProps`: a props object, in case we need to have the latest props
-                   passed in before they've actually updated
-      `newPage`: an integer page value, for paging through result lists from
-                 the backend
-      `concatBits`: whether to concatenate the bits that will be newly fetched
-                    with the existing bits in the state.
+   Params:
+     `nextProps`: a props object, in case we need to have the latest props
+                  passed in before they've actually updated,
+     `newPage`: an integer page value, for paging through result lists from
+                the backend,
+     `concatBits`: whether to concatenate the bits that will be newly fetched
+                   with the existing bits in the state.
 
   */
   buildPreviews({ nextProps = null,
@@ -43,25 +48,30 @@ class BitBox extends Component {
                   concatBits = false } = {}) {
     let props = nextProps || this.props,
         page  = newPage   || this.state.page,
+        fetchType, // The type of fetch we'll be making to the backend - whether
+                   // to the bit index action or the search action
         bitURI; // Our fetch URL
 
-    // If we have been given a query through our props,
-    if (props.query)
-      // Fetch from the bits search endpoint
+    // If we have been given a query through our props, build the URI to
+    // fetch from
+    if (props.query) {
       bitURI = `${constants.BITS_SEARCH_PATH}?q=${props.query}&page=${page}`;
-    // If not,
-    else
-      // Fetch from the bits index endpoint
+      fetchType = 'search';
+    }
+    // If not, fetch from the bits index endpoint.
+    else {
       bitURI = `${constants.BITS_PATH}?page=${page}`;
+      fetchType = 'index';
+    }
 
     // Fetch our new bits, build the bit previews if successful, and update
-    // the state
+    // the state.
     getFetch(bitURI)
     .then((response) => {
       return response.json();
     })
     .then((body) => {
-      // Construct our new previews
+      // Construct our new previews.
       let newBits = body.bits.map((bit) => {
         // When using the search endpoint, the body for the bit is actually
         // stored under the _source attribute, so account for that.
@@ -71,13 +81,13 @@ class BitBox extends Component {
         return <BitPreview key={bitBody.unique_id} num={bitBody.unique_id} body={bitBody.body.slice(0,30)} />;
       });
 
-      // Concatenate if necessary
+      // Concatenate if necessary.
       if (concatBits)
         newBits = this.state.bits.concat(newBits);
 
       // Update state.
-      this.setState({ bits: newBits, loading: false,
-                      page: page, numPages: body.numPages });
+      this.setState({ bits: newBits, loading: false, page: page,
+                      numPages: body.num_pages, fetchType: fetchType });
     });
   }
 
@@ -93,7 +103,7 @@ class BitBox extends Component {
   // Called on infinite load
   handleLoad = () => {
     this.setState((prevState) => {
-      // Increment our pager
+      // Increment our pager.
       let newPage = prevState.page + 1;
 
       // If the new pager value is greater than the number of pages in the
@@ -104,16 +114,16 @@ class BitBox extends Component {
 
       // Build new bit previews, updating the pager value and saying "yes" to
       // whether the new bits should be concatenated with the existing bit
-      // list
+      // list.
       this.buildPreviews({ concatBits: true, newPage: newPage });
 
-      // Update our state to have loading be true
+      // Update our state to have loading be true.
       return { loading: true };
     });
   }
 
   // Shown when new elements are being loaded, specifically when 'loading'
-  // is set to true in the state
+  // is set to true in the state.
   loadingElem() {
     return (
       <div className='infinite-list-item'>
@@ -124,15 +134,23 @@ class BitBox extends Component {
 
   render() {
     return (
-      <div className='infinite'>
-        <Infinite elementHeight={40}
-                  useWindowAsScrollContainer
-                  infiniteLoadBeginEdgeOffset={200}
-                  onInfiniteLoad={this.handleLoad}
-                  loadingSpinnerDelegate={this.loadingElem()}
-                  isInfiniteLoading={this.state.loading}>
-          {this.state.bits}
-        </Infinite>
+      <div>
+        {
+          (this.state.bits.length) ?
+          <div className='infinite'>
+            <Infinite elementHeight={40}
+                      useWindowAsScrollContainer
+                      infiniteLoadBeginEdgeOffset={200}
+                      onInfiniteLoad={this.handleLoad}
+                      loadingSpinnerDelegate={this.loadingElem()}
+                      isInfiniteLoading={this.state.loading}>
+              {this.state.bits}
+            </Infinite>
+          </div> :
+            ((this.state.fetchType == 'index') ?
+              <h5>Welcome to Bits! Create your first bit.</h5> :
+              <p>No results for <em>{this.props.query}</em>.</p>)
+        }
       </div>
     );
   }

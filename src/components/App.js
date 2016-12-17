@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, IndexRoute, browserHistory } from 'react-router';
+import { Router, Route, IndexRoute, Link, browserHistory } from 'react-router';
 import 'whatwg-fetch';
 // import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
@@ -13,16 +13,19 @@ import BitContainer from './BitContainer';
 import BitEditor from './BitEditor';
 import BitSearch from './BitSearch';
 import GenericNotFound from './GenericNotFound';
+import AppHeader from './AppHeader';
 
 class App extends Component {
   render() {
     return (
-      <div className='app'>
-        <div className='header'>
-          {/* <Link to='/bits'>Bits</Link> */}
-        </div>
-        <div>
-          {this.props.children}
+      <div>
+        <AppHeader />
+        <div id='content'>
+          <div className='app'>
+            <div>
+              {this.props.children}
+            </div>
+          </div>
         </div>
       </div>
     );

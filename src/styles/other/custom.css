@@ -11,6 +11,10 @@ body {
   font-family: 'Source Sans Pro', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+a {
+  cursor: pointer;
+}
+
 #content {
   margin-top: 80px;
 }
