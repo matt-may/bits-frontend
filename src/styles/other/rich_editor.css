@@ -6,6 +6,10 @@
   padding: 15px;
 }
 
+.editor-rich-root .btn {
+  font-family: 'Source Sans Pro', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
 .editor-full-window {
   position: fixed;
   top: 80px;

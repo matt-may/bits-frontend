@@ -140,17 +140,24 @@ class BitEditor extends Component {
   // Handles when we receive new props
   componentWillReceiveProps(nextProps) {
     // If the bit ID has changed, for example when the bit is clicked in the
-    // left sidebar,
+    // left sidebar, reinitialize our editor's state.
     if (nextProps.bitID !== this.bitID) {
-      // Clear our existing update timer.
-      this.clearUpdateTimer();
-      // Set our new bit ID.
-      this.bitID = nextProps.bitID;
-      // Boot up our editor.
-      this.initializeEditorState();
-      // Start a new update timer.
-      this.startUpdateTimer();
+      this.reinitializeState(nextProps.bitID);
     }
+  }
+
+  // Reinitializes editor state on selection of a new bit.
+  reinitializeState(bitID) {
+    // Clear our existing update timer.
+    this.clearUpdateTimer();
+    // Set our new bit ID.
+    this.bitID = bitID;
+    // Reset state.
+    this.setState({ inSync: true });
+    // Boot up our editor.
+    this.initializeEditorState();
+    // Start a new update timer.
+    this.startUpdateTimer();
   }
 
   // On mounting, initiates a setInterval for sending updates to the bit from
