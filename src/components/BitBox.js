@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Infinite from 'react-infinite';
+import { Link } from 'react-router';
 
 import BitPreview from './BitPreview';
 import NewBitButton from './NewBitButton';
@@ -146,9 +147,9 @@ class BitBox extends Component {
           </div> :
           <p className='lead'>
             { (this.state.fetchType == 'index') ?
-              <span>Welcome to Bits! Create your first bit.</span> :
+              <span>Welcome to Bits! <Link to='/bits/new'>Create your first bit</Link></span> :
               <span>No results for <u><em>{this.props.query}</em></u></span>
-            }
+            }.
           </p>
         }
       </div>
