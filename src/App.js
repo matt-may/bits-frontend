@@ -47,7 +47,7 @@ class BitSearch extends Component {
 class NewBitButton extends Component {
   render() {
     return (
-      <Link to={`/bits/new`} className='button button-black button-outline'>Write New Bit</Link>
+      <Link to={`/bits/new`} className='button button-outline'>Write New Bit</Link>
     );
   }
 }
