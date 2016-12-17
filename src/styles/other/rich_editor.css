@@ -25,6 +25,14 @@
   margin-top: 10px;
 }
 
+.editor-rich-editor pre {
+  margin-bottom: 0;
+}
+
+.public-DraftStyleDefault-pre {
+  margin-bottom: 10px !important;
+}
+
 .editor-rich-editor .public-DraftEditorPlaceholder-root,
 .editor-rich-editor .public-DraftEditor-content {
   margin: 0 -15px -15px;

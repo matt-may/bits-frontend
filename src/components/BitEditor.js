@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Editor, EditorState, ContentState, RichUtils, convertFromRaw, convertToRaw } from 'draft-js';
+import { Editor, EditorState, ContentState, RichUtils, convertFromRaw, convertToRaw, Modifier } from 'draft-js';
 
 import constants from '../constants';
 import { checkStatus, parseJSON, getFetch, fetchWithTokenAsJson } from '../helpers';
@@ -57,12 +57,23 @@ class BitEditor extends Component {
     this.focus = () => this.refs.editor.focus();
 
     this.onChange = (editorState) => {
-      // Update editor state
-      this.setState({ editorState, inSync: false });
+      // Save the previous (or current) editor state.
+      const prevState = this.state.editorState;
+
+      // Update the state to the given new state.
+      this.setState({ editorState })
+
+      // Extract the ContentState from each of the editor states.
+      const prevContentState = prevState.getCurrentContent();
+      const newContentState = editorState.getCurrentContent();
+
+      // Update our `inSync` state attribute depending on whether the content
+      // is the same.
+      this.setState({ inSync: prevContentState === newContentState });
 
       // If we haven't been assigned a bit ID and we're not already in the
-      // process of creating a new bit, check to see if there's text in the
-      // editor, and if so create a new bit.
+      // process of creating a new bit, attempt to create a new bit on the
+      // server.
       if (!this.bitID && !this.creatingBitNow)
         this.potentiallyCreateNewBit(editorState);
     }
@@ -96,6 +107,24 @@ class BitEditor extends Component {
         blockType
       )
     );
+
+    // this.onChange(
+    //
+    // )
+
+    // let { editorState } = this.state;
+    // let content = editorState.getCurrentContent();
+    // let selection = editorState.getSelection()
+    // console.log(editorState, );
+    //
+    // if (blockType === 'code-block') {
+    //   console.log('true')
+    //   //this.onChange(
+    //     Modifier.replaceText(
+    //       content, selection, 'dog'
+    //     )
+    //   //);
+    // }
   }
 
   _toggleInlineStyle(inlineStyle) {
@@ -217,7 +246,7 @@ class BitEditor extends Component {
       return;
 
     // Retrieve the editor state.
-    let state = this.state.editorState;
+    const state = this.state.editorState;
 
     // Post the most recent state of our bit to the server
     fetchWithTokenAsJson(constants.BITS_PATH + `/${this.bitID}`, {
