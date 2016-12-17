@@ -144,9 +144,12 @@ class BitBox extends Component {
               {this.state.bits}
             </Infinite>
           </div> :
-            ((this.state.fetchType == 'index') ?
-              <h5>Welcome to Bits! Create your first bit.</h5> :
-              <p>No results for <em>{this.props.query}</em>.</p>)
+          <p className='lead'>
+            { (this.state.fetchType == 'index') ?
+              <span>Welcome to Bits! Create your first bit.</span> :
+              <span>No results for <u><em>{this.props.query}</em></u></span>
+            }
+          </p>
         }
       </div>
     );
