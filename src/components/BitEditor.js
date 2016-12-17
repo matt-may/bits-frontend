@@ -69,7 +69,8 @@ class BitEditor extends Component {
 
       // Update our `inSync` state attribute depending on whether the content
       // is the same.
-      this.setState({ inSync: prevContentState === newContentState });
+      if (prevContentState !== newContentState)
+        this.setState({ inSync: false });
 
       // If we haven't been assigned a bit ID and we're not already in the
       // process of creating a new bit, attempt to create a new bit on the
@@ -101,6 +102,13 @@ class BitEditor extends Component {
   }
 
   _toggleBlockType(blockType) {
+    // this.onChange(
+    //   RichUtils.insertSoftNewline(
+    //     this.state.editorState,
+    //     blockType
+    //   )
+    // )
+
     this.onChange(
       RichUtils.toggleBlockType(
         this.state.editorState,
@@ -248,7 +256,7 @@ class BitEditor extends Component {
     // Retrieve the editor state.
     const state = this.state.editorState;
 
-    // Post the most recent state of our bit to the server
+    // Post the most recent state of our bit to the server.
     fetchWithTokenAsJson(constants.BITS_PATH + `/${this.bitID}`, {
       method: 'PUT',
       body: {
@@ -260,11 +268,13 @@ class BitEditor extends Component {
     })
     .then(checkStatus)
     .then(() => {
-      // Update inSync in our state
+      // Update inSync in our state.
       this.setState({ inSync: true });
     });
   }
 
+  // Pushes an update to the server of the current state, clearing and
+  // re-starting the update timer.
   forceUpdate = () => {
     this.updateBit();
     this.clearUpdateTimer();
