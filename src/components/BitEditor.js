@@ -49,6 +49,7 @@ class BitEditor extends Component {
     this.state = { editorState: EditorState.createEmpty(),
                    fullWindow: false, inSync: true };
 
+    // If we were given a bit ID, initialize the state of the editor.
     if (this.bitID)
       this.initializeEditorState();
 

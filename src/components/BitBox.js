@@ -124,22 +124,15 @@ class BitBox extends Component {
 
   render() {
     return (
-      <div>
-        { (this.state.bits.length) ?
-            <div className='infinite'>
-              <Infinite elementHeight={40}
-                        useWindowAsScrollContainer
-                        infiniteLoadBeginEdgeOffset={200}
-                        onInfiniteLoad={this.handleLoad}
-                        loadingSpinnerDelegate={this.loadingElem()}
-                        isInfiniteLoading={this.state.loading}>
-                {this.state.bits}
-              </Infinite>
-            </div>
-          : <p className="lead mt-1">
-              No bits yet. Go ahead and <NewBitButton>create one</NewBitButton>!
-            </p>
-        }
+      <div className='infinite'>
+        <Infinite elementHeight={40}
+                  useWindowAsScrollContainer
+                  infiniteLoadBeginEdgeOffset={200}
+                  onInfiniteLoad={this.handleLoad}
+                  loadingSpinnerDelegate={this.loadingElem()}
+                  isInfiniteLoading={this.state.loading}>
+          {this.state.bits}
+        </Infinite>
       </div>
     );
   }
