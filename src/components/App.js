@@ -4,15 +4,15 @@ import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import 'whatwg-fetch';
 // import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
+// CSS
+import '../styles/other/bootstrap.css';
+import '../styles/other/custom.css';
+
 // Components
 import BitContainer from './BitContainer';
 import BitEditor from './BitEditor';
 import BitSearch from './BitSearch';
 import GenericNotFound from './GenericNotFound';
-
-// CSS
-import '../styles/other/bootstrap.css';
-import '../styles/other/custom.css';
 
 class App extends Component {
   render() {

@@ -1,0 +1,15 @@
+/*.btn {
+  border-radius: 1px;
+}
+
+.btn-outline-secondary {
+  color: rgb(55, 58, 60);
+}*/
+
+#content {
+  margin-top: 80px;
+}
+
+.navbar .navbar-brand {
+  line-height: 54px;
+}
