@@ -26,10 +26,6 @@ class BitBox extends Component {
     this.buildPreviews();
   }
 
-  componentDidMount() {
-
-  }
-
   /*
    Builds a list of bit previews for loading into an infinite scrolling
    container.
@@ -78,7 +74,8 @@ class BitBox extends Component {
         let bitBody = (bit._source) ? bit._source : bit;
 
         // Return a BitPreview.
-        return <BitPreview key={bitBody.unique_id} num={bitBody.unique_id} body={bitBody.body.slice(0,30)} />;
+        return <BitPreview key={bitBody.unique_id} num={bitBody.unique_id}
+                           body={bitBody.body.slice(0,30)} />;
       });
 
       // Concatenate if necessary.

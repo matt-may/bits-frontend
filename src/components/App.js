@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, IndexRoute, Link, browserHistory } from 'react-router';
+import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import 'whatwg-fetch';
 // import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
@@ -21,10 +21,8 @@ class App extends Component {
       <div>
         <AppHeader />
         <div id='content'>
-          <div className='app'>
-            <div>
-              {this.props.children}
-            </div>
+          <div className='container'>
+            {this.props.children}
           </div>
         </div>
       </div>
