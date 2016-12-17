@@ -34,3 +34,7 @@ a {
 .card-preview:hover {
   cursor: pointer;
 }
+
+.card-inverse {
+  background-color: #333;
+}

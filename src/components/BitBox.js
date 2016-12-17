@@ -23,7 +23,7 @@ class BitBox extends Component {
     super(props);
 
     this.state = { bits: [], loading: false, page: 1, numPages: 1,
-                   fetchType: 'index' };
+                   fetchType: 'index', activeBit: null };
     // Store a flag that will tell us whether we have to bits to show (if we
     // don't, we'll want to show a message instead). Assume we have bits,
     // so initialize to true.
@@ -78,9 +78,11 @@ class BitBox extends Component {
         // When using the search endpoint, the body for the bit is actually
         // stored under the _source attribute, so account for that.
         let bitBody = (bit._source) ? bit._source : bit;
+        let uniqueID = bitBody.unique_id;
 
         // Return a BitPreview.
-        return <BitPreview key={bitBody.unique_id} num={bitBody.unique_id}
+        return <BitPreview key={uniqueID} num={uniqueID}
+                           onClick={this.handleBitClick}
                            body={bitBody.body.slice(0,30)} />;
       });
 
@@ -96,6 +98,18 @@ class BitBox extends Component {
                       numPages: body.num_pages, fetchType: fetchType });
     });
   }
+
+  handleBitClick = (bit) => {
+    if (this.state.activeBit)
+      this.state.activeBit.toggleActive();
+
+    bit.toggleActive();
+    this.setState({ activeBit: bit });
+  }
+
+  // openBit() {
+  //   browserHistory.push(`/bits/${this.props.num}`);
+  // }
 
   // Called when new props are received.
   componentWillReceiveProps(nextProps) {
