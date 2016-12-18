@@ -10,6 +10,8 @@ import { getFetch } from '../helpers';
 
 import '../styles/other/infinite.css';
 
+const SLICE_END_INDX = 30;
+
 /*
  Component to contain bit previews.
 
@@ -86,10 +88,9 @@ class BitBox extends Component {
         // Return a BitPreview.
         return <BitPreview key={uniqueID} num={uniqueID}
                            onClick={this.handleBitClick}
-                           onCreate={this.handleBitCreate}
                            onMount={this.resetActiveBit}
                            activeBitID={this.state.activeBitID}
-                           body={bitBody.body.slice(0,30)} />;
+                           body={bitBody.body.slice(0, SLICE_END_INDX)} />;
       })
 
       // Concatenate if necessary.
@@ -130,18 +131,47 @@ class BitBox extends Component {
     this.setState({ activeBit: bit, activeBitID: bit.props.num });
   }
 
-  handleBitCreate = (bit) => {
+  handleBitCreate(uniqueID) {
     let bits = this.state.bits;
 
+    let newBits = bits.unshift(
+      <BitPreview key={uniqueID} num={uniqueID}
+                  onClick={this.handleBitClick}
+                  onMount={this.resetActiveBit}
+                  activeBitID={this.state.activeBitID}
+                  body='' />
+    );
+
+    this.setState({ bits: newBits });
+  }
+
+  handleBitUpdate(uniqueID, body) {
+    let bits = this.state.bits;
+
+    // let newBits = bits.unshift(
+    //   <BitPreview key={uniqueID} num={uniqueID}
+    //               onClick={this.handleBitClick}
+    //               onMount={this.resetActiveBit}
+    //               activeBitID={this.state.activeBitID}
+    //               body='' />
+    // );
+    let targetBit = bits.filter((bit) => bit.props.num === uniqueID).first
+    targetBit.body = body;
+
+    this.setState({ bits: newBits });
   }
 
   // Called when new props are received.
   componentWillReceiveProps(nextProps) {
+    const currentProps = this.props;
+
     // If our query has changed,
-    if (this.props.query !== nextProps.query)
+    if (currentProps.query !== nextProps.query)
       // Update our bit previews. Reset the pager to 1, since we'll be starting
       // with a brand new result set.
       this.buildPreviews({ nextProps: nextProps, newPage: 1 });
+    else if (currentProps.newBit.uniqueID !== nextProps.newBit.uniqueID)
+      this.handleBitCreate(nextProps.newBit.uniqueID);
   }
 
   // Called on infinite load.

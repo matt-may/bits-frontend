@@ -170,6 +170,9 @@ class BitEditor extends Component {
     .then(parseJSON)
     .then((body) => {
       this.bitID = body.id;
+
+
+      this.props.onBitCreate(this.bitID);
     });
   }
 
@@ -177,9 +180,8 @@ class BitEditor extends Component {
   componentWillReceiveProps(nextProps) {
     // If the bit ID has changed, for example when the bit is clicked in the
     // left sidebar, reinitialize our editor's state.
-    if (nextProps.bitID !== this.bitID) {
+    if (nextProps.bitID !== this.bitID)
       this.reinitializeState(nextProps.bitID);
-    }
   }
 
   // Reinitializes editor state on selection of a new bit.
@@ -270,6 +272,10 @@ class BitEditor extends Component {
     .then(() => {
       // Update inSync in our state.
       this.setState({ inSync: true });
+
+      const { editorState } = this.state;
+      const editorBody = editorState.getCurrentContent().getPlainText();
+      this.props.onBitUpdate(this.bitID, editorBody);
     });
   }
 
