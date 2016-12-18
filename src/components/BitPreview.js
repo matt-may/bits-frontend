@@ -10,10 +10,12 @@ class BitPreview extends Component {
 
   componentDidMount() {
     this.mounted = true;
+    this.props.cbk(this);
   }
 
   componentWillUnmount() {
     this.mounted = false;
+    //this.props.cbk(this);
   }
 
   openBit() {
@@ -26,8 +28,23 @@ class BitPreview extends Component {
   }
 
   toggleActive() {
+    //console.log('mounted state is ', this.mounted);
     this.mounted && this.setState((prevState) => {
-      return { active: !prevState.active }
+      return { active: !prevState.active };
+    });
+  }
+
+  setActive() {
+    console.log('setting ', this.props.num, ' to active', '//mounted is ', this.mounted)
+    this.mounted && this.setState((prevState) => {
+      return { active: true };
+    });
+  }
+
+  setInactive() {
+    console.log('setting ', this.props.num, ' to inactive', '//mounted is ', this.mounted)
+    this.mounted && this.setState((prevState) => {
+      return { active: false };
     });
   }
 
@@ -38,7 +55,7 @@ class BitPreview extends Component {
       className += ' card-inverse';
 
     return (
-      <div className='infinite-list-item'>
+      <div className='infinite-list-item' ref={this.props.num} id={this.props.num}>
         <div onClick={this.handleClick} className={className}>
           <p className='card-text'>
             <span>

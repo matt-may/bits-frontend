@@ -23,7 +23,7 @@ class BitBox extends Component {
     super(props);
 
     this.state = { bits: [], loading: false, page: 1, numPages: 1,
-                   fetchType: 'index', activeBit: null };
+                   fetchType: 'index', activeBit: null, activeBitID: null };
     // Store a flag that will tell us whether we have to bits to show (if we
     // don't, we'll want to show a message instead). Assume we have bits,
     // so initialize to true.
@@ -83,6 +83,8 @@ class BitBox extends Component {
         // Return a BitPreview.
         return <BitPreview key={uniqueID} num={uniqueID}
                            onClick={this.handleBitClick}
+                           activeBitID={this.state.activeBitID}
+                           cbk={this.cbk}
                            body={bitBody.body.slice(0,30)} />;
       });
 
@@ -99,17 +101,21 @@ class BitBox extends Component {
     });
   }
 
-  handleBitClick = (bit) => {
-    if (this.state.activeBit)
-      this.state.activeBit.toggleActive();
-
-    bit.toggleActive();
-    this.setState({ activeBit: bit });
+  cbk = (bit) => {
+    //console.log(bit.props.num, this.state.activeBitID);
+    if (bit.props.num === this.state.activeBitID) {
+      bit.setActive();
+      this.setState({ activeBit: bit })
+    }
   }
 
-  // openBit() {
-  //   browserHistory.push(`/bits/${this.props.num}`);
-  // }
+  handleBitClick = (bit, manual=false) => {
+    if (this.state.activeBit)
+      this.state.activeBit.setInactive();
+
+    bit.setActive();
+    this.setState({ activeBit: bit, activeBitID: bit.props.num });
+  }
 
   // Called when new props are received.
   componentWillReceiveProps(nextProps) {
@@ -120,8 +126,32 @@ class BitBox extends Component {
       this.buildPreviews({ nextProps: nextProps, newPage: 1 });
   }
 
+  handleScroll = () => {
+    //console.log('active id is ', this.state.activeBitID);
+    // let activeBitID = this.state.activeBitID;
+    //
+    // if (activeBitID) {
+    //   var doc = document.getElementById(activeBitID)
+    //   if (doc) {
+    //     console.log(doc, 'TRUE!!!', this.refs.parent.refs)
+    //   }
+      // activeBit.setActive();
+      // console.log('toggling');
+      // if (! activeBit.state.active) {
+      //   activeBit.toggleActive();
+      // }
+    //}
+
+  }
+
   // Called on infinite load.
   handleLoad = () => {
+    // console.log(this.state.activeBit, this.state.activeBit.active)
+    // if (this.state.activeBit && !this.state.activeBit.state.active) {
+    //   console.log('toggling')
+    //   this.state.activeBit.
+    // }
+
     this.setState((prevState) => {
       // Increment our pager.
       let newPage = prevState.page + 1;
@@ -159,8 +189,10 @@ class BitBox extends Component {
           (this.hasBits)
           ? <div className='infinite'>
               <Infinite elementHeight={86}
+                        ref='parent'
                         useWindowAsScrollContainer
                         infiniteLoadBeginEdgeOffset={200}
+                        handleScroll={this.handleScroll}
                         onInfiniteLoad={this.handleLoad}
                         loadingSpinnerDelegate={this.loadingElem()}
                         isInfiniteLoading={this.state.loading}>
