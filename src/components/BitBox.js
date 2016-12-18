@@ -4,7 +4,6 @@ import { Link } from 'react-router';
 import Immutable from 'immutable';
 
 import BitPreview from './BitPreview';
-import NewBitButton from './NewBitButton';
 import constants from '../constants';
 import { getFetch } from '../helpers';
 
@@ -146,19 +145,12 @@ class BitBox extends Component {
   }
 
   handleBitUpdate(uniqueID, body) {
-    let bits = this.state.bits;
-
-    // let newBits = bits.unshift(
-    //   <BitPreview key={uniqueID} num={uniqueID}
-    //               onClick={this.handleBitClick}
-    //               onMount={this.resetActiveBit}
-    //               activeBitID={this.state.activeBitID}
-    //               body='' />
-    // );
-    let targetBit = bits.filter((bit) => bit.props.num === uniqueID).first
-    targetBit.body = body;
-
-    this.setState({ bits: newBits });
+    // let bits = this.state.bits;
+    //
+    // let targetBit = bits.filter((bit) => bit.props.num === uniqueID).first
+    // targetBit.body = body;
+    //
+    // this.setState({ bits: newBits });
   }
 
   // Called when new props are received.
@@ -170,8 +162,8 @@ class BitBox extends Component {
       // Update our bit previews. Reset the pager to 1, since we'll be starting
       // with a brand new result set.
       this.buildPreviews({ nextProps: nextProps, newPage: 1 });
-    else if (currentProps.newBit.uniqueID !== nextProps.newBit.uniqueID)
-      this.handleBitCreate(nextProps.newBit.uniqueID);
+    else if (currentProps.newBit !== nextProps.newBit)
+      this.handleBitCreate(nextProps.newBit);
   }
 
   // Called on infinite load.
@@ -224,7 +216,7 @@ class BitBox extends Component {
               </Infinite>
             </div>
           : <p className='lead'>
-              { (this.state.fetchType == 'index')
+              { (this.state.fetchType === 'index')
                 ? <span>Welcome to Bits! <Link to='/bits/new'>Create your first bit</Link></span>
                 : <span>No results for <u><em>{this.props.query}</em></u></span>
               }.

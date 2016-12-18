@@ -7,7 +7,7 @@ import BitEditor from './BitEditor';
 class BitSearch extends Component {
   constructor(props) {
     super(props);
-    this.state = { value: '', newBit: { uniqueID: null } };
+    this.state = { value: '', newBit: null };
   }
 
   handleChange = (e) => {
@@ -15,7 +15,7 @@ class BitSearch extends Component {
   }
 
   handleBitCreate = (uniqueID) => {
-    this.setState({ newBit: { uniqueID: uniqueID } });
+    this.setState({ newBit: uniqueID });
   }
 
   render() {
