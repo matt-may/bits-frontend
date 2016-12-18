@@ -22,6 +22,10 @@ class BitSearch extends Component {
     this.setState({ updatedBit: { uniqueID: uniqueID, body: body } });
   }
 
+  handleBitDelete = (uniqueID) => {
+    this.setState({ deletedBit: uniqueID });
+  }
+
   render() {
     // Grab our bit ID (if given) from query params.
     let bitID = this.props.params.bitID;
@@ -43,8 +47,10 @@ class BitSearch extends Component {
                     updatedBit={this.state.updatedBit} />
           </div>
           <div className='col-md-8 hidden-xs-down'>
-            <BitEditor newBit={newBit} bitID={bitID} onBitCreate={this.handleBitCreate}
-                       onBitUpdate={this.handleBitUpdate} />
+            <BitEditor newBit={newBit} bitID={bitID}
+                       onBitCreate={this.handleBitCreate}
+                       onBitUpdate={this.handleBitUpdate}
+                       onBitDelete={this.handleBitDelete} />
           </div>
         </div>
       </div>

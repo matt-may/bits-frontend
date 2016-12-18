@@ -285,6 +285,11 @@ class BitEditor extends Component {
     this.startUpdateTimer();
   }
 
+  handleDelete = () => {
+    if (!this.bitID) return;
+    this.props.onBitDelete(this.bitID);
+  }
+
   render() {
     const { editorState } = this.state;
 
@@ -314,7 +319,8 @@ class BitEditor extends Component {
           onToggle={this.toggleInlineStyle}
         />
         <button className='btn btn-sm btn-secondary mr-1' onClick={this.toggleFullWindow}>Full</button>
-        <button className='btn btn-sm btn-secondary' onClick={this.forceUpdate}>Save</button>
+        <button className='btn btn-sm btn-secondary mr-1' onClick={this.forceUpdate}>Save</button>
+        <button className='btn btn-sm btn-secondary' onClick={this.handleDelete}>Delete</button>
         <span className='text-muted float-xs-right sans-serif'>
           {this.state.inSync ? 'Saved' : 'Saving...'}
         </span>

@@ -5,7 +5,7 @@ import Immutable from 'immutable';
 
 import BitPreview from './BitPreview';
 import constants from '../constants';
-import { getFetch } from '../helpers';
+import { getFetch, parseJSON } from '../helpers';
 
 import '../styles/other/infinite.css';
 
@@ -36,7 +36,7 @@ class BitBox extends Component {
   }
 
   /*
-   Builds a list of bit previews for loading into an infinite scrolling
+   Builds a map of bit previews for loading into an infinite scrolling
    container.
 
    Params:
@@ -72,9 +72,7 @@ class BitBox extends Component {
     // Fetch our new bits, build the bit previews if successful, and update
     // the state.
     getFetch(bitURI)
-    .then((response) => {
-      return response.json();
-    })
+    .then(parseJSON)
     .then((body) => {
       // Construct our new previews.
       let bits = Immutable.OrderedMap(
@@ -88,6 +86,7 @@ class BitBox extends Component {
           return [uniqueID, <BitPreview key={uniqueID} num={uniqueID}
                                         onClick={this.handleBitClick}
                                         onMount={this.resetActiveBit}
+                                        onDelete={this.handleBitDelete}
                                         activeBitID={this.state.activeBitID}
                                         body={this.sliceBody(bitBody.body)} />];
         })
@@ -145,6 +144,7 @@ class BitBox extends Component {
       <BitPreview key={uniqueID} num={uniqueID}
                   onClick={this.handleBitClick}
                   onMount={this.resetActiveBit}
+                  onDelete={this.handleBitDelete}
                   activeBitID={this.state.activeBitID}
                   body='' />
     ]]).concat(this.state.bits);
@@ -152,16 +152,26 @@ class BitBox extends Component {
     this.setState({ bits: newBits });
   }
 
-  // A callback that handles the update of a new bit, update the BitPreview
+  // A callback that handles the update of a new bit, updating the BitPreview
   // object in the list.
   handleBitUpdate(uniqueID, body) {
     const bits = this.state.bits;
     const newPreview = <BitPreview key={uniqueID} num={uniqueID}
                                    onClick={this.handleBitClick}
                                    onMount={this.resetActiveBit}
+                                   onDelete={this.handleBitDelete}
                                    activeBitID={this.state.activeBitID}
                                    body={this.sliceBody(body)} />;
     const newBits = bits.set(uniqueID, newPreview);
+
+    this.setState({ bits: newBits });
+  }
+
+  // A callback that handles the delete of a new bit, deleting the BitPreview
+  // object in the list.
+  handleBitDelete = (bit) => {
+    const bits = this.state.bits;
+    const newBits = bits.delete(bit.props.num);
 
     this.setState({ bits: newBits });
   }
@@ -179,8 +189,10 @@ class BitBox extends Component {
     else if (currentProps.newBit !== nextProps.newBit)
       this.handleBitCreate(nextProps.newBit);
     // If a bit has been updated, execute a callback.
-    else if (currentProps.updatedBit.uniqueID !== nextProps.updatedBit.uniqueID)
-      this.handleBitUpdate(nextProps.updatedBit.uniqueID, nextProps.updatedBit.body);
+    else if (currentProps.updatedBit.uniqueID !== nextProps.updatedBit.uniqueID) {
+      const updatedBit = nextProps.updatedBit;
+      this.handleBitUpdate(updatedBit.uniqueID, updatedBit.body);
+    }
   }
 
   // Called on infinite load.
@@ -224,7 +236,7 @@ class BitBox extends Component {
               <Infinite elementHeight={86}
                         ref='parent'
                         useWindowAsScrollContainer
-                        infiniteLoadBeginEdgeOffset={200}
+                        infiniteLoadBeginEdgeOffset={400}
                         handleScroll={this.handleScroll}
                         onInfiniteLoad={this.handleLoad}
                         loadingSpinnerDelegate={this.loadingElem()}
