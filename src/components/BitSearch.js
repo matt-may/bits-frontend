@@ -7,7 +7,7 @@ import BitEditor from './BitEditor';
 class BitSearch extends Component {
   constructor(props) {
     super(props);
-    this.state = { value: '', newBit: null };
+    this.state = { value: '', newBit: null, updatedBit: { uniqueID: null, body: null }};
   }
 
   handleChange = (e) => {
@@ -16,6 +16,10 @@ class BitSearch extends Component {
 
   handleBitCreate = (uniqueID) => {
     this.setState({ newBit: uniqueID });
+  }
+
+  handleBitUpdate = (uniqueID, body) => {
+    this.setState({ updatedBit: { uniqueID: uniqueID, body: body } });
   }
 
   render() {
@@ -35,10 +39,12 @@ class BitSearch extends Component {
               <input type='text' value={this.state.value} onChange={this.handleChange}
                      placeholder='Search your bits.' className='form-control' />
             </div>
-            <BitBox query={this.state.value} newBit={this.state.newBit} />
+            <BitBox query={this.state.value} newBit={this.state.newBit}
+                    updatedBit={this.state.updatedBit} />
           </div>
           <div className='col-md-8 hidden-xs-down'>
-            <BitEditor newBit={newBit} bitID={bitID} onBitCreate={this.handleBitCreate} />
+            <BitEditor newBit={newBit} bitID={bitID} onBitCreate={this.handleBitCreate}
+                       onBitUpdate={this.handleBitUpdate} />
           </div>
         </div>
       </div>

@@ -24,8 +24,9 @@ class BitBox extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { bits: [], loading: false, page: 1, numPages: 1,
-                   fetchType: 'index', activeBit: null, activeBitID: null };
+    this.state = { bits: Immutable.OrderedMap(), loading: false, page: 1,
+                   numPages: 1, fetchType: 'index', activeBit: null,
+                   activeBitID: null };
     // Store a flag that will tell us whether we have to bits to show (if we
     // don't, we'll want to show a message instead). Assume we have bits,
     // so initialize to true.
@@ -75,34 +76,40 @@ class BitBox extends Component {
       return response.json();
     })
     .then((body) => {
-      const newBits = Immutable.List(body.bits);
-
       // Construct our new previews.
-      let previews = newBits.map((bit) => {
-        // When using the search endpoint, the body for the bit is actually
-        // stored under the _source attribute, so account for that.
-        let bitBody = (bit._source) ? bit._source : bit;
-        let uniqueID = bitBody.unique_id;
+      let bits = Immutable.OrderedMap(
+        body.bits.map((bit) => {
+          // When using the search endpoint, the body for the bit is actually
+          // stored under the _source attribute, so account for that.
+          let bitBody = (bit._source) ? bit._source : bit;
+          let uniqueID = bitBody.unique_id;
 
-        // Return a BitPreview.
-        return <BitPreview key={uniqueID} num={uniqueID}
-                           onClick={this.handleBitClick}
-                           onMount={this.resetActiveBit}
-                           activeBitID={this.state.activeBitID}
-                           body={bitBody.body.slice(0, SLICE_END_INDX)} />;
-      })
+          // Return a BitPreview.
+          return [uniqueID, <BitPreview key={uniqueID} num={uniqueID}
+                                        onClick={this.handleBitClick}
+                                        onMount={this.resetActiveBit}
+                                        activeBitID={this.state.activeBitID}
+                                        body={this.sliceBody(bitBody.body)} />];
+        })
+      );
 
       // Concatenate if necessary.
       if (concatBits)
-        previews = this.state.bits.concat(previews);
+        bits = this.state.bits.concat(bits);
 
       // Update the `hasBits` property indicating whether we have bits to show.
-      this.hasBits = (newBits.size > 0);
+      this.hasBits = (bits.size > 0);
 
       // Update state.
-      this.setState({ bits: previews, loading: false, page: page,
+      this.setState({ bits: bits, loading: false, page: page,
                       numPages: body.num_pages, fetchType: fetchType });
     });
+  }
+
+  // Slice the body text for previews.
+  sliceBody(body) {
+    if (!body || typeof body !== 'string') return;
+    return body.slice(0, SLICE_END_INDX);
   }
 
   // Resets the active bit to the one passed in. This is a callback executed
@@ -130,27 +137,33 @@ class BitBox extends Component {
     this.setState({ activeBit: bit, activeBitID: bit.props.num });
   }
 
+  // A callback that handles the creation of a new bit, adding a BitPreview to
+  // our list in the front position.
   handleBitCreate(uniqueID) {
-    let bits = this.state.bits;
-
-    let newBits = bits.unshift(
+    const newBits = Immutable.OrderedMap([[
+      uniqueID,
       <BitPreview key={uniqueID} num={uniqueID}
                   onClick={this.handleBitClick}
                   onMount={this.resetActiveBit}
                   activeBitID={this.state.activeBitID}
                   body='' />
-    );
+    ]]).concat(this.state.bits);
 
     this.setState({ bits: newBits });
   }
 
+  // A callback that handles the update of a new bit, update the BitPreview
+  // object in the list.
   handleBitUpdate(uniqueID, body) {
-    // let bits = this.state.bits;
-    //
-    // let targetBit = bits.filter((bit) => bit.props.num === uniqueID).first
-    // targetBit.body = body;
-    //
-    // this.setState({ bits: newBits });
+    const bits = this.state.bits;
+    const newPreview = <BitPreview key={uniqueID} num={uniqueID}
+                                   onClick={this.handleBitClick}
+                                   onMount={this.resetActiveBit}
+                                   activeBitID={this.state.activeBitID}
+                                   body={this.sliceBody(body)} />;
+    const newBits = bits.set(uniqueID, newPreview);
+
+    this.setState({ bits: newBits });
   }
 
   // Called when new props are received.
@@ -162,8 +175,12 @@ class BitBox extends Component {
       // Update our bit previews. Reset the pager to 1, since we'll be starting
       // with a brand new result set.
       this.buildPreviews({ nextProps: nextProps, newPage: 1 });
+    // If a new bit has been created, execute a callback.
     else if (currentProps.newBit !== nextProps.newBit)
       this.handleBitCreate(nextProps.newBit);
+    // If a bit has been updated, execute a callback.
+    else if (currentProps.updatedBit.uniqueID !== nextProps.updatedBit.uniqueID)
+      this.handleBitUpdate(nextProps.updatedBit.uniqueID, nextProps.updatedBit.body);
   }
 
   // Called on infinite load.
@@ -212,7 +229,7 @@ class BitBox extends Component {
                         onInfiniteLoad={this.handleLoad}
                         loadingSpinnerDelegate={this.loadingElem()}
                         isInfiniteLoading={this.state.loading}>
-                {this.state.bits}
+                {this.state.bits.valueSeq()}
               </Infinite>
             </div>
           : <p className='lead'>

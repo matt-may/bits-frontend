@@ -170,8 +170,6 @@ class BitEditor extends Component {
     .then(parseJSON)
     .then((body) => {
       this.bitID = body.id;
-
-
       this.props.onBitCreate(this.bitID);
     });
   }
@@ -180,7 +178,7 @@ class BitEditor extends Component {
   componentWillReceiveProps(nextProps) {
     // If the bit ID has changed, for example when the bit is clicked in the
     // left sidebar, reinitialize our editor's state.
-    if (nextProps.bitID !== this.bitID)
+    if (nextProps.bitID && (nextProps.bitID !== this.bitID))
       this.reinitializeState(nextProps.bitID);
   }
 
