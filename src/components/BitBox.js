@@ -83,8 +83,8 @@ class BitBox extends Component {
         // Return a BitPreview.
         return <BitPreview key={uniqueID} num={uniqueID}
                            onClick={this.handleBitClick}
+                           onMount={this.resetActiveBit}
                            activeBitID={this.state.activeBitID}
-                           cbk={this.cbk}
                            body={bitBody.body.slice(0,30)} />;
       });
 
@@ -101,15 +101,24 @@ class BitBox extends Component {
     });
   }
 
-  cbk = (bit) => {
-    //console.log(bit.props.num, this.state.activeBitID);
+  // Resets the active bit to the one passed in. This is a callback executed
+  // when BitPreviews are mounted. It is necessary because of how the Infinite
+  // box works. BitPreviews for a given bit are instantiated and torn down
+  // as the user scrolls. We want BitPreviews to tell us when they've mounted
+  // so we can determine if the attached bit for the preview is the current
+  // active bit. If so, we want to set it to active and reset the `activeBit`
+  // in the state, which stores an actual reference to the BitPreview object.
+  resetActiveBit = (bit) => {
     if (bit.props.num === this.state.activeBitID) {
       bit.setActive();
       this.setState({ activeBit: bit })
     }
   }
 
-  handleBitClick = (bit, manual=false) => {
+  // A callback that handles when a BitPreview is clicked. Retrieves the current
+  // active bit and sets it to inactive, then sets the new bit to active and
+  // updates the state.
+  handleBitClick = (bit) => {
     if (this.state.activeBit)
       this.state.activeBit.setInactive();
 
@@ -126,32 +135,8 @@ class BitBox extends Component {
       this.buildPreviews({ nextProps: nextProps, newPage: 1 });
   }
 
-  handleScroll = () => {
-    //console.log('active id is ', this.state.activeBitID);
-    // let activeBitID = this.state.activeBitID;
-    //
-    // if (activeBitID) {
-    //   var doc = document.getElementById(activeBitID)
-    //   if (doc) {
-    //     console.log(doc, 'TRUE!!!', this.refs.parent.refs)
-    //   }
-      // activeBit.setActive();
-      // console.log('toggling');
-      // if (! activeBit.state.active) {
-      //   activeBit.toggleActive();
-      // }
-    //}
-
-  }
-
   // Called on infinite load.
   handleLoad = () => {
-    // console.log(this.state.activeBit, this.state.activeBit.active)
-    // if (this.state.activeBit && !this.state.activeBit.state.active) {
-    //   console.log('toggling')
-    //   this.state.activeBit.
-    // }
-
     this.setState((prevState) => {
       // Increment our pager.
       let newPage = prevState.page + 1;
