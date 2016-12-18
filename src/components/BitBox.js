@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Infinite from 'react-infinite';
 import { Link } from 'react-router';
+import Immutable from 'immutable';
 
 import BitPreview from './BitPreview';
 import NewBitButton from './NewBitButton';
@@ -73,8 +74,10 @@ class BitBox extends Component {
       return response.json();
     })
     .then((body) => {
+      const newBits = Immutable.List(body.bits);
+
       // Construct our new previews.
-      let newBits = body.bits.map((bit) => {
+      let previews = newBits.map((bit) => {
         // When using the search endpoint, the body for the bit is actually
         // stored under the _source attribute, so account for that.
         let bitBody = (bit._source) ? bit._source : bit;
@@ -83,20 +86,21 @@ class BitBox extends Component {
         // Return a BitPreview.
         return <BitPreview key={uniqueID} num={uniqueID}
                            onClick={this.handleBitClick}
+                           onCreate={this.handleBitCreate}
                            onMount={this.resetActiveBit}
                            activeBitID={this.state.activeBitID}
                            body={bitBody.body.slice(0,30)} />;
-      });
+      })
 
       // Concatenate if necessary.
       if (concatBits)
-        newBits = this.state.bits.concat(newBits);
+        previews = this.state.bits.concat(previews);
 
       // Update the `hasBits` property indicating whether we have bits to show.
-      this.hasBits = (newBits.length > 0);
+      this.hasBits = (newBits.size > 0);
 
       // Update state.
-      this.setState({ bits: newBits, loading: false, page: page,
+      this.setState({ bits: previews, loading: false, page: page,
                       numPages: body.num_pages, fetchType: fetchType });
     });
   }
@@ -124,6 +128,11 @@ class BitBox extends Component {
 
     bit.setActive();
     this.setState({ activeBit: bit, activeBitID: bit.props.num });
+  }
+
+  handleBitCreate = (bit) => {
+    let bits = this.state.bits;
+
   }
 
   // Called when new props are received.

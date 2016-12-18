@@ -311,7 +311,7 @@ class BitEditor extends Component {
         />
         <button className='btn btn-sm btn-secondary mr-1' onClick={this.toggleFullWindow}>Full</button>
         <button className='btn btn-sm btn-secondary' onClick={this.forceUpdate}>Save</button>
-        <span className='text-muted float-xs-right'>
+        <span className='text-muted float-xs-right sans-serif'>
           {this.state.inSync ? 'Saved' : 'Saving...'}
         </span>
         <div className={className} onClick={this.focus}>
