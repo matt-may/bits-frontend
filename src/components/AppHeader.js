@@ -29,7 +29,7 @@ class AppHeader extends Component {
           <ul className='nav navbar-nav float-xs-right'>
             <li className='nav-item dropdown'>
               <a className='nav-link dropdown-toggle' id='supportedContentDropdown' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                <img ref='profile-photo' src={this.state.image} width='50' height='50' className='d-inline-block align-middle rounded-circle' alt='' />
+                <img ref='profile-photo' src={this.state.image} width='50' height='50' className='d-inline-block align-middle rounded-circle animated fadeIn' alt='' />
                 <span ref='profile-name' className='user-name'>{this.state.name}</span>
               </a>
               <div className='dropdown-menu' aria-labelledby='supportedContentDropdown'>

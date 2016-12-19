@@ -5,7 +5,7 @@ import NewBitButton from './NewBitButton';
 import BitBox from './BitBox';
 import BitEditor from './BitEditor';
 
-//import '../styles/other/animate.css';
+import '../styles/other/animate.css';
 
 class BitSearch extends Component {
   constructor(props) {

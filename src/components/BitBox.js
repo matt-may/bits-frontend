@@ -265,7 +265,7 @@ class BitBox extends Component {
       <div>
         {
           (this.hasBits)
-          ? <div className='infinite'>
+          ? <div className='container-infinite animated fadeIn'>
               <Infinite elementHeight={86}
                         useWindowAsScrollContainer={true}
                         infiniteLoadBeginEdgeOffset={400}

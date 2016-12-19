@@ -51,7 +51,7 @@ class BitPreview extends Component {
       className += ' card-inverse';
 
     return (
-      <div className='infinite-list-item' ref={this.props.num} id={this.props.num}>
+      <div className='infinite-list-item' ref='card' id={this.props.num}>
         <div onClick={this.handleClick} className={className}>
           <div className='card-block'>
             <p className='card-text'>
