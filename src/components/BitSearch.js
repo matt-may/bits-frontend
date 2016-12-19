@@ -77,7 +77,7 @@ class BitSearch extends Component {
         <StickyContainer>
           <div className='row'>
             <div className='col-md-4'>
-              <NewBitButton className='btn btn-secondary mb-1' />
+              <NewBitButton className='btn btn-success mb-1' />
               <div className='mb-1'>
                 <input type='text' value={this.state.value} onChange={this.handleChange}
                        placeholder='Search your bits.' className='form-control' />

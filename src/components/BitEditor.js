@@ -103,37 +103,12 @@ class BitEditor extends Component {
   }
 
   _toggleBlockType(blockType) {
-    // this.onChange(
-    //   RichUtils.insertSoftNewline(
-    //     this.state.editorState,
-    //     blockType
-    //   )
-    // )
-
     this.onChange(
       RichUtils.toggleBlockType(
         this.state.editorState,
         blockType
       )
     );
-
-    // this.onChange(
-    //
-    // )
-
-    // let { editorState } = this.state;
-    // let content = editorState.getCurrentContent();
-    // let selection = editorState.getSelection()
-    // console.log(editorState, );
-    //
-    // if (blockType === 'code-block') {
-    //   console.log('true')
-    //   //this.onChange(
-    //     Modifier.replaceText(
-    //       content, selection, 'dog'
-    //     )
-    //   //);
-    // }
   }
 
   _toggleInlineStyle(inlineStyle) {
@@ -213,6 +188,7 @@ class BitEditor extends Component {
   componentDidMount() {
     this.mounted = true;
     this.startUpdateTimer();
+    this.focus();
   }
 
   // Clears the update timer on unmount.
