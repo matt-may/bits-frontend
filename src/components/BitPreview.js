@@ -24,15 +24,9 @@ class BitPreview extends Component {
     this.mounted = false;
   }
 
-  // Launches the 'show' page for the attached bit.
-  openBit() {
-    browserHistory.push(`/bits/${this.props.num}`);
-  }
-
   // Executes a given callback, and makes a call to openBit.
   handleClick = () => {
     this.props.onClick(this);
-    this.openBit();
   }
 
   // Sets the current object to active if the component is mounted.

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Infinite from 'react-infinite';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import Immutable from 'immutable';
 
 import BitPreview from './BitPreview';
@@ -10,6 +10,7 @@ import { getFetch, parseJSON } from '../helpers';
 import '../styles/other/infinite.css';
 
 const SLICE_END_INDX = 30;
+const WINDOW_SIZE_BREAKPOINT = 768;
 
 /*
  Component to contain bit previews.
@@ -24,9 +25,15 @@ class BitBox extends Component {
   constructor(props) {
     super(props);
 
+    // Initialize the editor disposition based on the window size - if full,
+    // we open the editor and hide the other elements. If inline, we show the
+    // editor side-by-side with the bit previews.
+    const disposition = (this.props.windowWidth < WINDOW_SIZE_BREAKPOINT) ?
+                        'full' : 'inline';
+
     this.state = { bits: Immutable.OrderedMap(), loading: false, page: 1,
                    numPages: 1, fetchType: 'index', activeBit: null,
-                   activeBitID: null };
+                   activeBitID: null, disposition: disposition };
     // Store a flag that will tell us whether we have to bits to show (if we
     // don't, we'll want to show a message instead). Assume we have bits,
     // so initialize to true.
@@ -132,7 +139,18 @@ class BitBox extends Component {
       this.state.activeBit.setInactive();
 
     bit.setActive();
+    this.openBit(bit.props.num);
     this.setState({ activeBit: bit, activeBitID: bit.props.num });
+  }
+
+  // Launches the 'show' page for the attached bit.
+  openBit = (uniqueID) => {
+    let path = `/bits/${uniqueID}`;
+
+    if (this.state.disposition === 'full')
+      path += '/full';
+
+    browserHistory.push(path);
   }
 
   // A callback that handles the creation of a new bit, adding a BitPreview to
@@ -172,13 +190,20 @@ class BitBox extends Component {
     this.setState({ bits: newBits });
   }
 
+  handleWindowChange = (windowWidth) => {
+    const disposition = (windowWidth < WINDOW_SIZE_BREAKPOINT) ?
+                        'full' : 'inline';
+    this.setState({ disposition: disposition });
+  }
+
   // Called when new props are received.
   componentWillReceiveProps(nextProps) {
     const currentProps = this.props,
           query = nextProps.query,
           newBit = nextProps.newBit,
           updatedBit = nextProps.updatedBit,
-          deletedBit = nextProps.deletedBit;
+          deletedBit = nextProps.deletedBit,
+          windowWidth = nextProps.windowWidth;
 
     // If our query has changed,
     if (currentProps.query !== query)
@@ -194,6 +219,8 @@ class BitBox extends Component {
     // If a bit has been deleted, handle it.
     if (currentProps.deletedBit !== deletedBit)
       this.handleBitDelete(deletedBit);
+    if (currentProps.windowWidth !== windowWidth)
+      this.handleWindowChange(windowWidth);
   }
 
   // Called on infinite load.
