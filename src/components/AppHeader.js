@@ -44,7 +44,13 @@ class AppHeader extends Component {
                   <span ref='profile-name' className='user-name'>{this.state.name}</span>
                 </DropdownToggle>
                 <DropdownMenu>
-                  <DropdownItem><NavLink href='/users/sign_out'>Sign Out</NavLink></DropdownItem>
+                  <DropdownItem>
+                    <NavLink href='/users/sign_out'>Sign Out</NavLink>
+                  </DropdownItem>
+                  <DropdownItem divider />
+                  <DropdownItem>
+                    <NavLink href='mailto:matt@bitsy.pro'>Contact Us</NavLink>
+                  </DropdownItem>
                 </DropdownMenu>
               </Dropdown>
             </NavItem>
