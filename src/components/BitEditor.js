@@ -374,15 +374,15 @@ class BitEditor extends Component {
           onToggle={this.toggleInlineStyle}
         />
         <button className='btn btn-sm btn-secondary mr-1' onClick={this.toggleFullWindow}>Full</button>
-        <button className='btn btn-sm btn-secondary mr-1' onClick={this.forceUpdate}>Save</button>
-        {
-          (this.bitID)
-          ? <button className='btn btn-sm btn-secondary' onClick={this.handleDelete}>Delete</button>
-          : null
-        }
-        <span className='text-muted float-xs-right sans-serif'>
-          {this.state.inSync ? 'Saved' : 'Saving...'}
-        </span>
+        <button className='btn btn-sm btn-primary mr-1' onClick={this.forceUpdate}>Save</button>
+        <div className='text-muted float-xs-right sans-serif'>
+          <span style={{verticalAlign: 'bottom'}}>{this.state.inSync ? 'Saved' : 'Saving...'}</span>
+          {
+            (this.bitID)
+            ? <button className='btn btn-sm btn-warning ml-1' onClick={this.handleDelete}>Delete</button>
+            : null
+          }
+        </div>
         <div className={className} onClick={this.focus}>
           <Editor
             blockStyleFn={getBlockStyle}
@@ -391,7 +391,7 @@ class BitEditor extends Component {
             handleKeyCommand={this.handleKeyCommand}
             onChange={this.onChange}
             onTab={this.onTab}
-            placeholder='Write a new bit.'
+            placeholder='Start writing here.'
             ref='editor'
             spellCheck={true}
           />
