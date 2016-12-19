@@ -33,7 +33,7 @@ class AppHeader extends Component {
     return (
       <Navbar color='faded' light>
         <Container>
-          <Link to='/bits' className='navbar-brand'>Bits</Link>
+          <Link to='/bits' className='navbar-brand'>Bitsy</Link>
           <Nav className='float-xs-right' navbar>
             <NavItem>
               <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
