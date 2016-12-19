@@ -18,6 +18,7 @@ a {
 
 .navbar .navbar-brand {
   line-height: 54px;
+  font-weight: 700;
 }
 
 .navbar .user-name {
