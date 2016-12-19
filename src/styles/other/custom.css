@@ -39,3 +39,7 @@ a {
 .card-inverse {
   background-color: #333;
 }
+
+.card-preview .card-footer {
+  font-size: 13px;
+}

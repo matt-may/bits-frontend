@@ -50,7 +50,7 @@ class BitPreview extends Component {
   }
 
   render() {
-    let className = 'card card-block card-preview';
+    let className = 'card card-preview';
 
     // If the current object is active, add a special class.
     if (this.state.active)
@@ -59,15 +59,17 @@ class BitPreview extends Component {
     return (
       <div className='infinite-list-item' ref={this.props.num} id={this.props.num}>
         <div onClick={this.handleClick} className={className}>
-          <p className='card-text'>
-            <span>
-              {
-                (this.props.body && this.props.body.length)
-                ? this.props.body
-                : 'Empty bit :-)'
-              }
-            </span>
-          </p>
+          <div className='card-block'>
+            <p className='card-text'>
+              <span>
+                {
+                  (this.props.body && this.props.body.length)
+                  ? this.props.body
+                  : 'Empty bit :-)'
+                }
+              </span>
+            </p>
+          </div>
         </div>
       </div>
     );
