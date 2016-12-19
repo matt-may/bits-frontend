@@ -1,4 +1,4 @@
-const BASE_URI = 'http://localhost:3005/api';
+const BASE_URI = 'https://bitsy.pro/api';
 
 const CONSTANTS = {
   BITS_PATH: BASE_URI + '/bits',
