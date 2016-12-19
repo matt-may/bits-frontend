@@ -76,6 +76,8 @@ class BitEditor extends Component {
       // If we haven't been assigned a bit ID and we're not already in the
       // process of creating a new bit, attempt to create a new bit on the
       // server.
+      console.log('in on change , bit id is ', this.bitID)
+
       if (!this.bitID && !this.creatingBitNow)
         this.potentiallyCreateNewBit(editorState);
     }
@@ -146,7 +148,8 @@ class BitEditor extends Component {
   }
 
   _toggleFullWindow() {
-    this.props.onFullWindow();
+    if (this.props.onFullWindow)
+      this.props.onFullWindow();
 
     this.setState((prevState) => {
       return { fullWindow: !prevState.fullWindow }
@@ -157,7 +160,10 @@ class BitEditor extends Component {
   // indicating that we're in the process of requesting a bit ID from the server,
   // and we initiate that process.
   potentiallyCreateNewBit(editorState) {
+    console.log('potentially creating new ')
     let editorText = editorState.getCurrentContent().getPlainText();
+
+    console.log("length is ", editorText.length)
 
     if (editorText.length > 0) {
       this.creatingBitNow = true;
@@ -173,7 +179,12 @@ class BitEditor extends Component {
     .then(parseJSON)
     .then((body) => {
       this.bitID = body.id;
-      this.props.onBitCreate(this.bitID);
+      this.creatingBitNow = false;
+
+      console.log('created new bit...!')
+
+      if (this.props.onBitCreate)
+        this.props.onBitCreate(this.bitID);
     });
   }
 
@@ -187,6 +198,7 @@ class BitEditor extends Component {
 
   // Reinitializes editor state on selection of a new bit.
   reinitializeState(bitID) {
+    console.log('reiniting state, timer id is ', this.timerID)
     // Clear our existing update timer.
     this.clearUpdateTimer();
     // Set our new bit ID.
@@ -202,11 +214,13 @@ class BitEditor extends Component {
   // On mounting, initiates a setInterval for sending updates to the bit from
   // the client to our backend. By default, we send updates every 10 seconds.
   componentDidMount() {
+    this.mounted = true;
     this.startUpdateTimer();
   }
 
   // Clears the update timer on unmount.
   componentWillUnmount() {
+    this.mounted = false;
     this.clearUpdateTimer();
   }
 
@@ -215,9 +229,11 @@ class BitEditor extends Component {
       () => this.updateBit(),
       UPDATE_INTERVAL
     );
+    console.log('created timer id ', this.timerID);
   }
 
   clearUpdateTimer() {
+    console.log('clearing timer id ', this.timerID)
     clearInterval(this.timerID);
   }
 
@@ -249,6 +265,7 @@ class BitEditor extends Component {
   updateBit() {
     // Return if we have no bit ID to update, or we're already in sync.
     if (!this.bitID) {
+      console.log('attempting to set state ', ' timer id is ', this.timerID);
       this.setState({ inSync: true })
       return;
     }
@@ -276,7 +293,9 @@ class BitEditor extends Component {
 
       const { editorState } = this.state;
       const editorBody = editorState.getCurrentContent().getPlainText();
-      this.props.onBitUpdate(this.bitID, editorBody);
+
+      if (this.props.onBitUpdate)
+        this.props.onBitUpdate(this.bitID, editorBody);
     });
   }
 
@@ -292,18 +311,27 @@ class BitEditor extends Component {
   handleDelete = () => {
     if (!this.bitID) return;
 
+    console.log('--- handling delete')
+
     // Instruct the server to delete the bit.
     fetchWithTokenAsJson(constants.BITS_PATH + `/${this.bitID}`, {
       method: 'DELETE',
     })
     .then(checkStatus)
     .then(() => {
-      // Call the given callback.
-      this.props.onBitDelete(this.bitID);
+      if (this.props.onBitDelete)
+        // Call the given callback.
+        this.props.onBitDelete(this.bitID);
+
+      // Clear the bit ID.
+      this.bitID = null;
+
+      // Clear the editor state.
+      this.setState({ editorState: EditorState.createEmpty(), inSync: true });
+      this.clearUpdateTimer();
+
       // Reset our path.
       browserHistory.push('/bits');
-      // Reinitialize state with a null bit ID.
-      this.reinitializeState(null);
     });
   }
 
@@ -337,7 +365,11 @@ class BitEditor extends Component {
         />
         <button className='btn btn-sm btn-secondary mr-1' onClick={this.toggleFullWindow}>Full</button>
         <button className='btn btn-sm btn-secondary mr-1' onClick={this.forceUpdate}>Save</button>
-        <button className='btn btn-sm btn-secondary' onClick={this.handleDelete}>Delete</button>
+        {
+          (this.bitID)
+          ? <button className='btn btn-sm btn-secondary' onClick={this.handleDelete}>Delete</button>
+          : null
+        }
         <span className='text-muted float-xs-right sans-serif'>
           {this.state.inSync ? 'Saved' : 'Saving...'}
         </span>
