@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Editor, EditorState, ContentState, RichUtils, convertFromRaw, convertToRaw, Modifier } from 'draft-js';
+import { browserHistory } from 'react-router';
 
 import constants from '../constants';
 import { checkStatus, parseJSON, getFetch, fetchWithTokenAsJson } from '../helpers';
@@ -189,7 +190,7 @@ class BitEditor extends Component {
     // Set our new bit ID.
     this.bitID = bitID;
     // Reset state.
-    this.setState({ inSync: true });
+    this.setState({ editorState: EditorState.createEmpty(), inSync: true });
     // Boot up our editor.
     this.initializeEditorState();
     // Start a new update timer.
@@ -285,9 +286,23 @@ class BitEditor extends Component {
     this.startUpdateTimer();
   }
 
+  // Handle deletion of a bit.
   handleDelete = () => {
     if (!this.bitID) return;
-    this.props.onBitDelete(this.bitID);
+
+    // Instruct the server to delete the bit.
+    fetchWithTokenAsJson(constants.BITS_PATH + `/${this.bitID}`, {
+      method: 'DELETE',
+    })
+    .then(checkStatus)
+    .then(() => {
+      // Call the given callback.
+      this.props.onBitDelete(this.bitID);
+      // Reset our path.
+      browserHistory.push('/bits');
+      // Reinitialize state with a null bit ID.
+      this.reinitializeState(null);
+    });
   }
 
   render() {

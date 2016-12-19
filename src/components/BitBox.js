@@ -54,11 +54,11 @@ class BitBox extends Component {
     let props = nextProps || this.props,
         page  = newPage   || this.state.page,
         fetchType, // The type of fetch we'll be making to the backend - whether
-                   // to the bit index action or the search action
-        bitURI; // Our fetch URL
+                   // to the bit index action or the search action.
+        bitURI; // Our fetch URI.
 
     // If we have been given a query through our props, build the URI to
-    // fetch from
+    // fetch from.
     if (props.query) {
       bitURI = `${constants.BITS_SEARCH_PATH}?q=${props.query}&page=${page}`;
       fetchType = 'search';
@@ -86,7 +86,6 @@ class BitBox extends Component {
           return [uniqueID, <BitPreview key={uniqueID} num={uniqueID}
                                         onClick={this.handleBitClick}
                                         onMount={this.resetActiveBit}
-                                        onDelete={this.handleBitDelete}
                                         activeBitID={this.state.activeBitID}
                                         body={this.sliceBody(bitBody.body)} />];
         })
@@ -144,7 +143,6 @@ class BitBox extends Component {
       <BitPreview key={uniqueID} num={uniqueID}
                   onClick={this.handleBitClick}
                   onMount={this.resetActiveBit}
-                  onDelete={this.handleBitDelete}
                   activeBitID={this.state.activeBitID}
                   body='' />
     ]]).concat(this.state.bits);
@@ -159,7 +157,6 @@ class BitBox extends Component {
     const newPreview = <BitPreview key={uniqueID} num={uniqueID}
                                    onClick={this.handleBitClick}
                                    onMount={this.resetActiveBit}
-                                   onDelete={this.handleBitDelete}
                                    activeBitID={this.state.activeBitID}
                                    body={this.sliceBody(body)} />;
     const newBits = bits.set(uniqueID, newPreview);
@@ -169,30 +166,34 @@ class BitBox extends Component {
 
   // A callback that handles the delete of a new bit, deleting the BitPreview
   // object in the list.
-  handleBitDelete = (bit) => {
+  handleBitDelete = (uniqueID) => {
     const bits = this.state.bits;
-    const newBits = bits.delete(bit.props.num);
-
+    const newBits = bits.delete(uniqueID);
     this.setState({ bits: newBits });
   }
 
   // Called when new props are received.
   componentWillReceiveProps(nextProps) {
-    const currentProps = this.props;
+    const currentProps = this.props,
+          query = nextProps.query,
+          newBit = nextProps.newBit,
+          updatedBit = nextProps.updatedBit,
+          deletedBit = nextProps.deletedBit;
 
     // If our query has changed,
-    if (currentProps.query !== nextProps.query)
+    if (currentProps.query !== query)
       // Update our bit previews. Reset the pager to 1, since we'll be starting
       // with a brand new result set.
       this.buildPreviews({ nextProps: nextProps, newPage: 1 });
     // If a new bit has been created, execute a callback.
-    else if (currentProps.newBit !== nextProps.newBit)
-      this.handleBitCreate(nextProps.newBit);
+    if (currentProps.newBit !== newBit)
+      this.handleBitCreate(newBit);
     // If a bit has been updated, execute a callback.
-    else if (currentProps.updatedBit.uniqueID !== nextProps.updatedBit.uniqueID) {
-      const updatedBit = nextProps.updatedBit;
+    if (currentProps.updatedBit.uniqueID !== updatedBit.uniqueID)
       this.handleBitUpdate(updatedBit.uniqueID, updatedBit.body);
-    }
+    // If a bit has been deleted, handle it.
+    if (currentProps.deletedBit !== deletedBit)
+      this.handleBitDelete(deletedBit);
   }
 
   // Called on infinite load.
