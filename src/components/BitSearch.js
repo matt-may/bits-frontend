@@ -10,7 +10,7 @@ class BitSearch extends Component {
     super(props);
     this.state = { value: '', newBit: null, deletedBit: null,
                    updatedBit: { uniqueID: null, body: null },
-                   width: null, height: null };
+                   width: null, height: null, sticky: true };
   }
 
   handleChange = (e) => {
@@ -27,6 +27,12 @@ class BitSearch extends Component {
 
   handleBitDelete = (uniqueID) => {
     this.setState({ deletedBit: uniqueID });
+  }
+
+  toggleFullWindowEditor = () => {
+    this.setState((prevState) => {
+      return { sticky: !prevState.sticky };
+    });
   }
 
   updateDimensions = () => {
@@ -59,6 +65,10 @@ class BitSearch extends Component {
     // create a new bit.
     let newBit = bitID ? false : true;
 
+    // Modify the sticky container's class based on whether we want it on or
+    // off.
+    const stickyClass = (this.state.sticky) ? '' : 'no-sticky';
+
     return (
       <div>
         <h1 className='mb-2'>My Bits</h1>
@@ -77,11 +87,12 @@ class BitSearch extends Component {
                       windowWidth={this.state.width} />
             </div>
             <div className='col-md-8 hidden-sm-down'>
-              <Sticky>
+              <Sticky className={stickyClass}>
                 <BitEditor newBit={newBit} bitID={bitID}
                            onBitCreate={this.handleBitCreate}
                            onBitUpdate={this.handleBitUpdate}
-                           onBitDelete={this.handleBitDelete} />
+                           onBitDelete={this.handleBitDelete}
+                           onFullWindow={this.toggleFullWindowEditor} />
               </Sticky>
             </div>
           </div>

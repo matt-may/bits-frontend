@@ -146,6 +146,8 @@ class BitEditor extends Component {
   }
 
   _toggleFullWindow() {
+    this.props.onFullWindow();
+
     this.setState((prevState) => {
       return { fullWindow: !prevState.fullWindow }
     });
