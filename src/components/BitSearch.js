@@ -5,6 +5,8 @@ import NewBitButton from './NewBitButton';
 import BitBox from './BitBox';
 import BitEditor from './BitEditor';
 
+//import '../styles/other/animate.css';
+
 class BitSearch extends Component {
   constructor(props) {
     super(props);
@@ -87,7 +89,7 @@ class BitSearch extends Component {
                       windowWidth={this.state.width} />
             </div>
             <div className='col-md-8 hidden-sm-down'>
-              <Sticky className={stickyClass}>
+              <Sticky className={stickyClass} topOffset={-80}>
                 <BitEditor newBit={newBit} bitID={bitID}
                            onBitCreate={this.handleBitCreate}
                            onBitUpdate={this.handleBitUpdate}

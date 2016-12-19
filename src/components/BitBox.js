@@ -210,15 +210,20 @@ class BitBox extends Component {
       // Update our bit previews. Reset the pager to 1, since we'll be starting
       // with a brand new result set.
       this.buildPreviews({ nextProps: nextProps, newPage: 1 });
+
     // If a new bit has been created, execute a callback.
     if (currentProps.newBit !== newBit)
       this.handleBitCreate(newBit);
+
     // If a bit has been updated, execute a callback.
-    if (currentProps.updatedBit.uniqueID !== updatedBit.uniqueID)
+    if (currentProps.updatedBit.uniqueID !== updatedBit.uniqueID ||
+         (currentProps.updatedBit.body !== updatedBit.body))
       this.handleBitUpdate(updatedBit.uniqueID, updatedBit.body);
+
     // If a bit has been deleted, handle it.
     if (currentProps.deletedBit !== deletedBit)
       this.handleBitDelete(deletedBit);
+
     if (currentProps.windowWidth !== windowWidth)
       this.handleWindowChange(windowWidth);
   }

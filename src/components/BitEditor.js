@@ -76,8 +76,6 @@ class BitEditor extends Component {
       // If we haven't been assigned a bit ID and we're not already in the
       // process of creating a new bit, attempt to create a new bit on the
       // server.
-      console.log('in on change , bit id is ', this.bitID)
-
       if (!this.bitID && !this.creatingBitNow)
         this.potentiallyCreateNewBit(editorState);
     }
@@ -198,7 +196,6 @@ class BitEditor extends Component {
 
   // Reinitializes editor state on selection of a new bit.
   reinitializeState(bitID) {
-    console.log('reiniting state, timer id is ', this.timerID)
     // Clear our existing update timer.
     this.clearUpdateTimer();
     // Set our new bit ID.
@@ -224,17 +221,25 @@ class BitEditor extends Component {
     this.clearUpdateTimer();
   }
 
+  // Syncs the client and server editor state every N seconds, and executes an
+  // update callback that allows the sidebar to update with the newest saved
+  // text. Sets `this.timerID`.
   startUpdateTimer() {
+    // As a precaution, go ahead and clear any existing timer.
+    if (this.timerID)
+      this.clearUpdateTimer();
+
     this.timerID = setInterval(
       () => this.updateBit(),
       UPDATE_INTERVAL
     );
-    console.log('created timer id ', this.timerID);
   }
 
+  // Clears the interval currently stored as this.timerID, and resets the
+  // timerID to null.
   clearUpdateTimer() {
-    console.log('clearing timer id ', this.timerID)
     clearInterval(this.timerID);
+    this.timerID = null;
   }
 
   initializeEditorState() {
@@ -265,7 +270,6 @@ class BitEditor extends Component {
   updateBit() {
     // Return if we have no bit ID to update, or we're already in sync.
     if (!this.bitID) {
-      console.log('attempting to set state ', ' timer id is ', this.timerID);
       this.setState({ inSync: true })
       return;
     }
@@ -299,19 +303,29 @@ class BitEditor extends Component {
     });
   }
 
-  // Pushes an update to the server of the current state, clearing and
-  // re-starting the update timer.
+  // Pushes an update to the server of the current state, and clears and
+  // re-starts the update timer.
   forceUpdate = () => {
     this.updateBit();
-    this.clearUpdateTimer();
     this.startUpdateTimer();
+  }
+
+  // Clears the current editor state, for example on deletion of the current
+  // bit.
+  clearState = () => {
+    // Clear the bit ID.
+    this.bitID = null;
+
+    // Clear the editor state.
+    this.setState({ editorState: EditorState.createEmpty(), inSync: true });
+
+    // Clear the update timer.
+    this.clearUpdateTimer();
   }
 
   // Handle deletion of a bit.
   handleDelete = () => {
     if (!this.bitID) return;
-
-    console.log('--- handling delete')
 
     // Instruct the server to delete the bit.
     fetchWithTokenAsJson(constants.BITS_PATH + `/${this.bitID}`, {
@@ -323,12 +337,8 @@ class BitEditor extends Component {
         // Call the given callback.
         this.props.onBitDelete(this.bitID);
 
-      // Clear the bit ID.
-      this.bitID = null;
-
-      // Clear the editor state.
-      this.setState({ editorState: EditorState.createEmpty(), inSync: true });
-      this.clearUpdateTimer();
+      // Clear the current editor state.
+      this.clearState();
 
       // Reset our path.
       browserHistory.push('/bits');
