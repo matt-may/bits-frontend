@@ -133,10 +133,7 @@ class BitEditor extends Component {
   // indicating that we're in the process of requesting a bit ID from the server,
   // and we initiate that process.
   potentiallyCreateNewBit(editorState) {
-    console.log('potentially creating new ')
     let editorText = editorState.getCurrentContent().getPlainText();
-
-    console.log("length is ", editorText.length)
 
     if (editorText.length > 0) {
       this.creatingBitNow = true;
@@ -153,8 +150,6 @@ class BitEditor extends Component {
     .then((body) => {
       this.bitID = body.id;
       this.creatingBitNow = false;
-
-      console.log('created new bit...!')
 
       if (this.props.onBitCreate)
         this.props.onBitCreate(this.bitID);
