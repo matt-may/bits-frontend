@@ -1,4 +1,7 @@
 .sticky {
   z-index: 999;
-  top: 80px;
+  top: 85px !important;
+  -webkit-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
 }

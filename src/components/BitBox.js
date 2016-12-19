@@ -235,8 +235,7 @@ class BitBox extends Component {
           (this.hasBits)
           ? <div className='infinite'>
               <Infinite elementHeight={86}
-                        ref='parent'
-                        useWindowAsScrollContainer
+                        useWindowAsScrollContainer={true}
                         infiniteLoadBeginEdgeOffset={400}
                         handleScroll={this.handleScroll}
                         onInfiniteLoad={this.handleLoad}
@@ -245,7 +244,7 @@ class BitBox extends Component {
                 {this.state.bits.valueSeq()}
               </Infinite>
             </div>
-          : <p className='lead'>
+          : <p>
               { (this.state.fetchType === 'index')
                 ? <span>Welcome to Bits! <Link to='/bits/new'>Create your first bit</Link></span>
                 : <span>No results for <u><em>{this.props.query}</em></u></span>
