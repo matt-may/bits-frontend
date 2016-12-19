@@ -20,7 +20,7 @@ class App extends Component {
     return (
       <div>
         <AppHeader />
-        <div id='content'>
+        <div id='content' className='mt-1'>
           <div className='container'>
             {this.props.children}
           </div>

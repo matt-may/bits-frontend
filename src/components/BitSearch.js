@@ -89,7 +89,7 @@ class BitSearch extends Component {
                       windowWidth={this.state.width} />
             </div>
             <div className='col-md-8 hidden-sm-down'>
-              <Sticky className={stickyClass} topOffset={-80}>
+              <Sticky className={stickyClass} topOffset={-15}>
                 <BitEditor newBit={newBit} bitID={bitID}
                            onBitCreate={this.handleBitCreate}
                            onBitUpdate={this.handleBitUpdate}
