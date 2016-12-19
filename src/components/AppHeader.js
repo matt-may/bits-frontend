@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router';
+import { Container, Navbar, NavbarBrand, Nav, NavItem, NavLink,
+         Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
 import constants from '../constants';
 import { checkStatus, parseJSON, getFetch } from '../helpers';
@@ -7,8 +9,14 @@ import { checkStatus, parseJSON, getFetch } from '../helpers';
 class AppHeader extends Component {
   constructor(props) {
     super(props);
-    this.state = { name: '', image: '' };
+    this.state = { name: '', image: '', dropdownOpen: false };
     this.buildHeader();
+  }
+
+  toggle = () => {
+    this.setState((prevState) => {
+      dropdownOpen: !prevState.dropdownOpen
+    });
   }
 
   // Fills in the user's name and profile image in our header.
@@ -23,22 +31,26 @@ class AppHeader extends Component {
 
   render() {
     return (
-      <nav className='navbar navbar-fixed-top navbar-light bg-faded'>
-        <div className='container'>
-          <Link to='/bits' className='navbar-brand'>Bits</Link>
-          <ul className='nav navbar-nav float-xs-right'>
-            <li className='nav-item dropdown'>
-              <a className='nav-link dropdown-toggle' id='supportedContentDropdown' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-                <img ref='profile-photo' src={this.state.image} width='50' height='50' className='d-inline-block align-middle rounded-circle animated fadeIn' alt='' />
-                <span ref='profile-name' className='user-name'>{this.state.name}</span>
-              </a>
-              <div className='dropdown-menu' aria-labelledby='supportedContentDropdown'>
-                <a className='dropdown-item' href='#'>Sign out</a>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </nav>
+      <div>
+        <Navbar color='faded' light>
+          <Container>
+            <NavbarBrand href='/bits'>Bits</NavbarBrand>
+            <Nav className='float-xs-right' navbar>
+              <NavItem>
+                <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+                  <DropdownToggle caret nav>
+                    <img ref='profile-photo' src={this.state.image} width='50' height='50' className='d-inline-block align-middle rounded-circle animated fadeIn' alt='profile-photo' />
+                    <span ref='profile-name' className='user-name'>{this.state.name}</span>
+                  </DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem><NavLink href='http://www.google.com'>Sign Out</NavLink></DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              </NavItem>
+            </Nav>
+          </Container>
+        </Navbar>
+      </div>
     );
   }
 }
