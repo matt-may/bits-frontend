@@ -8,8 +8,7 @@ class NoBitsBox extends Component {
   render() {
     return (
       <div>
-        <NoBitsGreeting fetchType={this.props.fetchType}></NoBitsGreeting>
-        {
+        <NoBitsGreeting fetchType={this.props.fetchType}></NoBitsGreeting> {
           (this.props.fetchType === 'index')
           ? <NoBitsMessage disposition={this.props.disposition}></NoBitsMessage>
           : <NoBitsResults query={this.props.query}></NoBitsResults>

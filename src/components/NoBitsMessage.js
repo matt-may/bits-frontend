@@ -7,7 +7,7 @@ class NoBitsMessage extends Component {
       (this.props.disposition === 'inline')
       ? <p className='text-muted'>Simply start typing in the editor to the right
                                   to create your first bit.</p>
-      : <Link to='/bits/new'>Create your first bit.</Link>
+      : <Link to='/bits/new'>Tap here to create your first bit.</Link>
     );
   }
 }
