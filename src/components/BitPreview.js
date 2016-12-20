@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Dotdotdot from 'react-dotdotdot';
 
 import { timeSince } from '../helpers';
 
@@ -47,16 +48,11 @@ class BitPreview extends Component {
   }
 
   // Slices a string of text up to a given index for previews.
-  sliceBody(body) {
+  formatBody(body) {
     if (!body || typeof body !== 'string')
       return 'Empty bit :-)';
 
-    let slice = body.slice(0, SLICE_END_INDX);
-
-    if (slice.length < body.length)
-      slice += '...';
-
-    return slice;
+    return body;
   }
 
   // Determines if an ellipsis is needed when truncating `fullBody` to
@@ -73,16 +69,17 @@ class BitPreview extends Component {
       className += ' card-active';
 
     // Slice the body text for display.
-    const slicedBody = this.sliceBody(this.props.body);
+    const body = this.formatBody(this.props.body);
 
     return (
       <div className='infinite-list-item' ref='card' id={this.props.num}>
         <div onClick={this.handleClick} className={className}>
           <div className='card-block'>
-            <p className='card-text'>
-              <span dangerouslySetInnerHTML={{__html: slicedBody}}>
-              </span>
-            </p>
+            <Dotdotdot clamp={3}>
+              <p className='card-text'>
+                <span dangerouslySetInnerHTML={{ __html: body }}></span>
+              </p>
+            </Dotdotdot>
           </div>
           <div className='card-footer text-muted sans-serif'>
             Updated {timeSince(this.props.updatedAt)}

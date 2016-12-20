@@ -32,13 +32,11 @@ a {
 
 .card-preview {
   font-family: Georgia, serif;
-  word-wrap: break-word;
   border: 1px solid #ddd;
 }
 
 .card-preview > .card-block {
   max-height: 112px;
-  overflow: hidden;
 }
 
 .card-preview:hover {

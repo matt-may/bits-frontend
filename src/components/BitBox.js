@@ -86,8 +86,8 @@ class BitBox extends Component {
           // When using the search endpoint, the body for the bit is actually
           // stored under the _source attribute, so account for that.
           const bitObj = bit._source ? bit._source : bit;
-          const { uniqueID, body } = bitObj;
-          const highlight = bit.highlight ? bit.highlight.body[0] : null;
+          const uniqueID = bitObj.unique_id;
+          const body = bit.highlight ? bit.highlight.body[0] : bitObj.body;
 
           // Return a BitPreview.
           return [uniqueID, <BitPreview key={uniqueID} num={uniqueID}
@@ -166,17 +166,13 @@ class BitBox extends Component {
   // object in the list.
   handleBitUpdate(uniqueID, body) {
     const bits = this.state.bits;
-    const nonUpdatedBits = bits.delete(uniqueID);
-
-    const newBits = Immutable.OrderedMap([[
-      uniqueID,
-      <BitPreview key={uniqueID} num={uniqueID}
-                                 onClick={this.handleBitClick}
-                                 onMount={this.resetActiveBit}
-                                 activeBitID={this.state.activeBitID}
-                                 body={body}
-                                 updatedAt={new Date()}/>
-    ]]).concat(nonUpdatedBits);
+    const newPreview = <BitPreview key={uniqueID} num={uniqueID}
+                                   onClick={this.handleBitClick}
+                                   onMount={this.resetActiveBit}
+                                   activeBitID={this.state.activeBitID}
+                                   body={body}
+                                   updatedAt={new Date()}/>;
+    const newBits = bits.set(uniqueID, newPreview);
 
     this.setState({ bits: newBits });
   }
