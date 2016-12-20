@@ -93,7 +93,8 @@ class BitBox extends Component {
                                         onClick={this.handleBitClick}
                                         onMount={this.resetActiveBit}
                                         activeBitID={this.state.activeBitID}
-                                        body={bitObj.body} />];
+                                        body={bitObj.body}
+                                        updatedAt={bitObj.updated_at} />];
         })
       );
 

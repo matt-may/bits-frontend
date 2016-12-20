@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import { timeSince } from '../helpers';
+
 const SLICE_END_INDX = 80;
 
 class BitPreview extends Component {
@@ -44,10 +46,17 @@ class BitPreview extends Component {
     });
   }
 
-  // Slices the a string of text up to a given index for previews.
+  // Slices a string of text up to a given index for previews.
   sliceBody(body) {
-    if (!body || typeof body !== 'string') return '';
-    return body.slice(0, SLICE_END_INDX);
+    if (!body || typeof body !== 'string')
+      return '';
+
+    let slice = body.slice(0, SLICE_END_INDX);
+
+    if (slice.length < body.length)
+      slice += '...';
+
+    return slice;
   }
 
   // Determines if an ellipsis is needed when truncating `fullBody` to
@@ -63,9 +72,8 @@ class BitPreview extends Component {
     if (this.state.active)
       className += ' card-inverse';
 
-    const fullBody = this.props.body;
-    const slicedBody = this.sliceBody(fullBody);
-    const needsEllipsis = this.needsEllipsis(slicedBody, fullBody);
+    // Slice the body text for display.
+    const slicedBody = this.sliceBody(this.props.body);
 
     return (
       <div className='infinite-list-item' ref='card' id={this.props.num}>
@@ -75,14 +83,14 @@ class BitPreview extends Component {
               <span>
                 {
                   (slicedBody)
-                  ? <span>
-                      <span>{slicedBody}</span>
-                      <span>{needsEllipsis ? '...' : ''}</span>
-                    </span>
+                  ? <span>{slicedBody}</span>
                   : 'Empty bit :-)'
                 }
               </span>
             </p>
+          </div>
+          <div className='card-footer text-muted'>
+            Updated {timeSince(this.props.updatedAt)} ago
           </div>
         </div>
       </div>

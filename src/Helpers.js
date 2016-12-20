@@ -27,24 +27,24 @@ function getAuthToken() {
     return '';
 }
 
-// Initiates a fetch, including session information
+// Initiates a fetch, including session information.
 function _fetchWithSession(uri, options={}) {
   // If we're in production, we'll use 'same-origin' as the fetch 'credentials'
   // option as we won't be making a CORS request. If we're in development mode,
   // we will be, so use 'include'.
   let credentials = constants.IN_PRODUCTION ? 'same-origin' : 'include';
 
-  // Create an object containing the 'credentials' option for fetch
+  // Create an object containing the 'credentials' option for fetch.
   let credObj = { credentials: credentials };
 
-  // Merge the credentials option in with the existing options
+  // Merge the credentials option in with the existing options.
   let mergedOptions = Object.assign({}, credObj, options);
 
   // Fetch
   return fetch(uri, mergedOptions);
 }
 
-// Initiates a GET fetch, including cookies with the request
+// Initiates a GET fetch, including cookies with the request.
 function getFetch(uri) {
   return _fetchWithSession(uri);
 }
@@ -59,25 +59,64 @@ function fetchWithTokenAsJson(uri, options={}) {
   let authToken = getAuthToken();
 
   // Initialize a body var to either the current body if specified or an empty
-  // object
+  // object.
   let body = options.body || {};
 
-  // Merge the authenticity token in with the body, and JSON stringify it
+  // Merge the authenticity token in with the body, and JSON stringify it.
   options.body = JSON.stringify(
                    Object.assign({ authenticity_token: authToken }, body)
                  );
 
-  // Set headers to ensure the server knows we're sending JSON
+  // Set headers to ensure the server knows we're sending JSON.
   options.headers = options.headers || {};
   options.headers['Content-Type'] = 'application/json';
 
-  // Fetch
+  // Fetch.
   return _fetchWithSession(uri, options);
+}
+
+// Returns the time since a date in words.
+function timeSince(date) {
+  if (!date) return;
+
+  let dateObj = date;
+
+  if (typeof dateObj === 'string')
+    dateObj = new Date(dateObj);
+
+  let seconds = Math.floor((new Date() - dateObj) / 1000);
+  let interval = Math.floor(seconds / 31536000);
+
+  if (interval > 1)
+    return interval + ' years';
+
+  interval = Math.floor(seconds / 2592000);
+
+  if (interval > 1)
+    return interval + ' months';
+
+  interval = Math.floor(seconds / 86400);
+
+  if (interval > 1)
+    return interval + ' days';
+
+  interval = Math.floor(seconds / 3600);
+
+  if (interval > 1)
+    return interval + ' hours';
+
+  interval = Math.floor(seconds / 60);
+
+  if (interval > 1)
+    return interval + ' minutes';
+
+  return Math.floor(seconds) + ' seconds';
 }
 
 module.exports = {
   checkStatus: checkStatus,
   parseJSON: parseJSON,
   getFetch: getFetch,
-  fetchWithTokenAsJson: fetchWithTokenAsJson
+  fetchWithTokenAsJson: fetchWithTokenAsJson,
+  timeSince: timeSince
 }
