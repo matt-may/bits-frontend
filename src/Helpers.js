@@ -77,40 +77,50 @@ function fetchWithTokenAsJson(uri, options={}) {
 
 // Returns the time since a date in words.
 function timeSince(date) {
-  if (!date) return;
+  if (typeof date !== 'object')
+    date = new Date(date);
 
-  let dateObj = date;
+  const seconds = Math.floor((new Date() - date) / 1000);
 
-  if (typeof dateObj === 'string')
-    dateObj = new Date(dateObj);
+  if (seconds < 30)
+    return 'just now';
+  else if (seconds < 60)
+    return 'less than a minute ago';
 
-  let seconds = Math.floor((new Date() - dateObj) / 1000);
+  let intervalType;
+
   let interval = Math.floor(seconds / 31536000);
+  if (interval >= 1) {
+    intervalType = 'year';
+  } else {
+    interval = Math.floor(seconds / 2592000);
+    if (interval >= 1) {
+      intervalType = 'month';
+    } else {
+      interval = Math.floor(seconds / 86400);
+      if (interval >= 1) {
+        intervalType = 'day';
+      } else {
+        interval = Math.floor(seconds / 3600);
+        if (interval >= 1) {
+          intervalType = 'hour';
+        } else {
+          interval = Math.floor(seconds / 60);
+          if (interval >= 1) {
+            intervalType = 'minute';
+          } else {
+            interval = seconds;
+            intervalType = 'second';
+          }
+        }
+      }
+    }
+  }
 
-  if (interval > 1)
-    return interval + ' years';
+  if (interval > 1 || interval === 0)
+    intervalType += 's';
 
-  interval = Math.floor(seconds / 2592000);
-
-  if (interval > 1)
-    return interval + ' months';
-
-  interval = Math.floor(seconds / 86400);
-
-  if (interval > 1)
-    return interval + ' days';
-
-  interval = Math.floor(seconds / 3600);
-
-  if (interval > 1)
-    return interval + ' hours';
-
-  interval = Math.floor(seconds / 60);
-
-  if (interval > 1)
-    return interval + ' minutes';
-
-  return Math.floor(seconds) + ' seconds';
+  return interval + ' ' + intervalType + ' ago';
 }
 
 module.exports = {

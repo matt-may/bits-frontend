@@ -90,7 +90,7 @@ class BitPreview extends Component {
             </p>
           </div>
           <div className='card-footer text-muted'>
-            Updated {timeSince(this.props.updatedAt)} ago
+            Updated {timeSince(this.props.updatedAt)}
           </div>
         </div>
       </div>
