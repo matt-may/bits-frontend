@@ -33,7 +33,7 @@ class BitBox extends Component {
 
     this.state = { bits: Immutable.OrderedMap(), loading: false, page: 1,
                    numPages: 1, fetchType: 'index', activeBit: null,
-                   activeBitID: null, disposition: disposition,
+                   activeBitID: this.props.bitID, disposition: disposition,
                    fetched: false };
 
     // Create our bit previews.
@@ -92,7 +92,6 @@ class BitBox extends Component {
           return [uniqueID, <BitPreview key={uniqueID} num={uniqueID}
                                         onClick={this.handleBitClick}
                                         onMount={this.resetActiveBit}
-                                        activeBitID={this.state.activeBitID}
                                         body={body}
                                         updatedAt={bitObj.updated_at}/>];
         })
@@ -153,7 +152,6 @@ class BitBox extends Component {
       <BitPreview key={uniqueID} num={uniqueID}
                   onClick={this.handleBitClick}
                   onMount={this.resetActiveBit}
-                  activeBitID={this.state.activeBitID}
                   body=''
                   updatedAt={new Date()}/>
     ]]).concat(this.state.bits);
@@ -168,7 +166,6 @@ class BitBox extends Component {
     const newPreview = <BitPreview key={uniqueID} num={uniqueID}
                                    onClick={this.handleBitClick}
                                    onMount={this.resetActiveBit}
-                                   activeBitID={this.state.activeBitID}
                                    body={body}
                                    updatedAt={new Date()}/>;
     const newBits = bits.set(uniqueID, newPreview);

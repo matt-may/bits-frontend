@@ -63,6 +63,7 @@ class BitSearch extends Component {
   render() {
     // Grab our bit ID (if given) from query params.
     let bitID = this.props.params.bitID;
+
     // If no bit ID has been given, we'll set a flag telling our editor to
     // create a new bit.
     let newBit = bitID ? false : true;
@@ -82,7 +83,9 @@ class BitSearch extends Component {
                 <input type='text' value={this.state.value} onChange={this.handleChange}
                        placeholder='Search your bits.' className='form-control' />
               </div>
-              <BitBox query={this.state.value} newBit={this.state.newBit}
+              <BitBox query={this.state.value}
+                      newBit={this.state.newBit}
+                      bitID={bitID}
                       updatedBit={this.state.updatedBit}
                       deletedBit={this.state.deletedBit}
                       windowHeight={this.state.height}
@@ -90,7 +93,8 @@ class BitSearch extends Component {
             </div>
             <div className='col-md-8 hidden-sm-down'>
               <Sticky className={stickyClass} topOffset={-15}>
-                <BitEditor newBit={newBit} bitID={bitID}
+                <BitEditor newBit={newBit}
+                           bitID={bitID}
                            onBitCreate={this.handleBitCreate}
                            onBitUpdate={this.handleBitUpdate}
                            onBitDelete={this.handleBitDelete}

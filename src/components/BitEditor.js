@@ -157,6 +157,9 @@ class BitEditor extends Component {
 
       if (this.props.onBitCreate)
         this.props.onBitCreate(this.bitID);
+    })
+    .catch(() => {
+      throw new Error('Unable to create new bit.');
     });
   }
 
@@ -236,19 +239,21 @@ class BitEditor extends Component {
       this.setState({ editorState: editorState });
     })
     .catch(() => {
-      this.setState({ editorState: EditorState.createEmpty() });
+      throw new Error('Error initializing editor state. Unable to retrieve ' +
+                      'details on bit from server.');
     });
   }
 
   // Sends a request to our backend to update the bit. If successful, updates
   // inSync in the state to true.
   updateBit() {
-    // Return if we have no bit ID to update, or we're already in sync.
+    // Return if we have no bit ID to update.
     if (!this.bitID) {
       this.setState({ inSync: true })
       return;
     }
 
+    // Return if we're already in sync.
     if (this.state.inSync)
       return;
 
@@ -273,8 +278,10 @@ class BitEditor extends Component {
       this.setState({ inSync: true });
 
       // Call the given callback if we were given one.
-      if (this.props.onBitUpdate)
+      if (this.props.onBitUpdate) {
+        console.log('calling update callback')
         this.props.onBitUpdate(this.bitID, bitBody);
+      }
     });
   }
 

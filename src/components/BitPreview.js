@@ -25,7 +25,9 @@ class BitPreview extends Component {
   }
 
   startUpdateTimer() {
-    this.timerID = setInterval(this.refreshUpdatedAt, UPDATE_INTERVAL);
+    this.timerID = setInterval(() => {
+      this.refreshUpdatedAt()
+    }, UPDATE_INTERVAL);
   }
 
   refreshUpdatedAt() {
@@ -80,7 +82,8 @@ class BitPreview extends Component {
           <div className='card-block'>
             <Dotdotdot clamp={3}>
               <p className='card-text'>
-                <span dangerouslySetInnerHTML={{ __html: body }}></span>
+                {body}
+                {/* <span dangerouslySetInnerHTML={{ __html: body }}></span> */}
               </p>
             </Dotdotdot>
           </div>
