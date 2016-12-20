@@ -161,7 +161,8 @@ class BitBox extends Component {
 
   // A callback that handles the update of a new bit, updating the BitPreview
   // object in the list.
-  handleBitUpdate(uniqueID, body) {
+  handleBitUpdate(updatedBit) {
+    const { uniqueID, body } = updatedBit;
     const bits = this.state.bits;
     const newPreview = <BitPreview key={uniqueID} num={uniqueID}
                                    onClick={this.handleBitClick}
@@ -218,7 +219,7 @@ class BitBox extends Component {
     // If a bit has been updated, execute a callback.
     if (currentProps.updatedBit.uniqueID !== updatedBit.uniqueID ||
          (currentProps.updatedBit.body !== updatedBit.body))
-      this.handleBitUpdate(updatedBit.uniqueID, updatedBit.body);
+      this.handleBitUpdate(updatedBit);
 
     // If a bit has been deleted, handle it.
     if (currentProps.deletedBit !== deletedBit)
@@ -270,7 +271,7 @@ class BitBox extends Component {
           ? <InfiniteContainer handleScroll={this.handleScroll}
                                onInfiniteLoad={this.handleLoad}
                                loadingSpinnerDelegate={this.loadingElem()}
-                              isInfiniteLoading={this.state.loading}>
+                               isInfiniteLoading={this.state.loading}>
               {this.state.bits.valueSeq()}
             </InfiniteContainer>
           : <NoBitsBox fetchType={this.state.fetchType}

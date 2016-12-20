@@ -11,8 +11,7 @@ class BitPreview extends Component {
     // The `active` state will track whether this BitPreview is the current
     // active preview in the list. `timeSinceUpdated` stores the time since the
     // bit was last updated, in words.
-    this.state = { active: false,
-                   timeSinceUpdated: timeSince(this.props.updatedAt) };
+    this.state = { active: false, timeSinceUpdated: this.timeSinceUpdated() };
 
     this.mounted = false;
     this.timerID = null;
@@ -24,18 +23,36 @@ class BitPreview extends Component {
     this.startUpdateTimer();
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.updatedAt !== nextProps.updatedAt) {
+      this.clearUpdateTimer();
+      this.refreshUpdatedAt(nextProps.updatedAt);
+      this.startUpdateTimer();
+    }
+  }
+
   startUpdateTimer() {
     this.timerID = setInterval(() => {
       this.refreshUpdatedAt()
     }, UPDATE_INTERVAL);
   }
 
-  refreshUpdatedAt() {
-    this.setState({ timeSinceUpdated: timeSince(this.props.updatedAt) })
+  clearUpdateTimer() {
+    clearInterval(this.timerID);
+  }
+
+  refreshUpdatedAt(updatedAt) {
+    this.setState({
+      timeSinceUpdated: this.timeSinceUpdated(updatedAt || this.props.updatedAt) 
+    });
+  }
+
+  timeSinceUpdated(updatedAt) {
+    return timeSince(updatedAt || this.props.updatedAt);
   }
 
   componentWillUnmount() {
-    clearInterval(this.timerID);
+    // this.clearUpdateTimer();
     this.mounted = false;
   }
 

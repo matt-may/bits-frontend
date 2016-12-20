@@ -24,7 +24,7 @@ class BitSearch extends Component {
   }
 
   handleBitUpdate = (uniqueID, body) => {
-    this.setState({ updatedBit: { uniqueID: uniqueID, body: body } });
+    this.setState({ updatedBit: { uniqueID, body } });
   }
 
   handleBitDelete = (uniqueID) => {

@@ -279,7 +279,6 @@ class BitEditor extends Component {
 
       // Call the given callback if we were given one.
       if (this.props.onBitUpdate) {
-        console.log('calling update callback')
         this.props.onBitUpdate(this.bitID, bitBody);
       }
     });
