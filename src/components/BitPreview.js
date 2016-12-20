@@ -3,32 +3,41 @@ import Dotdotdot from 'react-dotdotdot';
 
 import { timeSince } from '../helpers';
 
-const SLICE_END_INDX = 53;
+const UPDATE_INTERVAL = 30000;
 
 class BitPreview extends Component {
   constructor(props) {
     super(props);
-    // Keep tracking of whether the component is mounted, or subsequent
-    // method invocations that require state changes.
-    this.mounted = false;
+    // The `active` state will track whether this BitPreview is the current
+    // active preview in the list. `timeSinceUpdated` stores the time since the
+    // bit was last updated, in words.
+    this.state = { active: false,
+                   timeSinceUpdated: timeSince(this.props.updatedAt) };
 
-    // The active state will track whether this BitPreview is the current
-    // active preview in the list.
-    this.state = { active: false };
+    this.mounted = false;
+    this.timerID = null;
   }
 
   componentDidMount() {
     this.mounted = true;
-
-    // Execute the given callback, passing in the current object.
     this.props.onMount(this);
+    this.startUpdateTimer();
+  }
+
+  startUpdateTimer() {
+    this.timerID = setInterval(this.refreshUpdatedAt, UPDATE_INTERVAL);
+  }
+
+  refreshUpdatedAt() {
+    this.setState({ timeSinceUpdated: timeSince(this.props.updatedAt) })
   }
 
   componentWillUnmount() {
+    clearInterval(this.timerID);
     this.mounted = false;
   }
 
-  // Executes a given callback, and makes a call to openBit.
+  // Executes a given callback when the preview is clicked.
   handleClick = () => {
     this.props.onClick(this);
   }
@@ -47,18 +56,12 @@ class BitPreview extends Component {
     });
   }
 
-  // Slices a string of text up to a given index for previews.
+  // Formats the bit body for display.
   formatBody(body) {
     if (!body || typeof body !== 'string')
       return 'Empty bit :-)';
 
     return body;
-  }
-
-  // Determines if an ellipsis is needed when truncating `fullBody` to
-  // `slicedBody` for showing in a preview. Returns true if yes, else false.
-  needsEllipsis(slicedBody, fullBody) {
-    return slicedBody.length < fullBody.length;
   }
 
   render() {
@@ -82,7 +85,7 @@ class BitPreview extends Component {
             </Dotdotdot>
           </div>
           <div className='card-footer text-muted sans-serif'>
-            Updated {timeSince(this.props.updatedAt)}
+            Updated {this.state.timeSinceUpdated}
           </div>
         </div>
       </div>

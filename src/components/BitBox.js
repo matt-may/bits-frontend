@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import Infinite from 'react-infinite';
-import { Link, browserHistory } from 'react-router';
+import { browserHistory } from 'react-router';
 import Immutable from 'immutable';
 
 import BitPreview from './BitPreview';

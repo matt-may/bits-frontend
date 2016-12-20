@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Editor, EditorState, ContentState, RichUtils, convertFromRaw, convertToRaw, Modifier } from 'draft-js';
+import { Editor, EditorState, RichUtils, convertFromRaw, convertToRaw } from 'draft-js';
 import { browserHistory } from 'react-router';
 
 import constants from '../constants';
@@ -12,9 +12,13 @@ import '../styles/other/sticky.css';
 // Frequency at which to sync the client<->server bit state.
 const UPDATE_INTERVAL = 10000;
 
-// var rawData = convertToRaw(editorState.getCurrentContent())
-// var contentState = ContentState.createFromBlockArray(Draft.convertFromRaw(rawData))
-// var editorState = EditorState.createWithContent(contentState)
+// Custom overrides for 'code' style.
+const styleMap = {
+  CODE: {
+    fontFamily: 'monospace',
+    fontSize: 16,
+  },
+};
 
 class BitEditor extends Component {
   constructor(props) {
@@ -171,7 +175,7 @@ class BitEditor extends Component {
     // Set our new bit ID.
     this.bitID = bitID;
     // Reset state.
-    this.setState({ editorState: EditorState.createEmpty(), inSync: true });
+    this.setState({ inSync: true });
     // Boot up our editor.
     this.initializeEditorState();
     // Start a new update timer.
@@ -181,14 +185,11 @@ class BitEditor extends Component {
   // On mounting, initiates a setInterval for sending updates to the bit from
   // the client to our backend. By default, we send updates every 10 seconds.
   componentDidMount() {
-    this.mounted = true;
     this.startUpdateTimer();
-    this.focus();
   }
 
   // Clears the update timer on unmount.
   componentWillUnmount() {
-    this.mounted = false;
     this.clearUpdateTimer();
   }
 
@@ -233,6 +234,9 @@ class BitEditor extends Component {
       }
 
       this.setState({ editorState: editorState });
+    })
+    .catch(() => {
+      this.setState({ editorState: EditorState.createEmpty() });
     });
   }
 
@@ -250,14 +254,16 @@ class BitEditor extends Component {
 
     // Retrieve the editor state.
     const state = this.state.editorState;
+    const bitBody = state.getCurrentContent().getPlainText();
+    const jsBody = JSON.stringify(convertToRaw(state.getCurrentContent()));
 
     // Post the most recent state of our bit to the server.
     fetchWithTokenAsJson(constants.BITS_PATH + `/${this.bitID}`, {
       method: 'PUT',
       body: {
         bit: {
-          body: state.getCurrentContent().getPlainText(),
-          js_body: JSON.stringify(convertToRaw(state.getCurrentContent())),
+          body: bitBody,
+          js_body: jsBody,
         }
       }
     })
@@ -266,11 +272,9 @@ class BitEditor extends Component {
       // Update inSync in our state.
       this.setState({ inSync: true });
 
-      const { editorState } = this.state;
-      const editorBody = editorState.getCurrentContent().getPlainText();
-
+      // Call the given callback if we were given one.
       if (this.props.onBitUpdate)
-        this.props.onBitUpdate(this.bitID, editorBody);
+        this.props.onBitUpdate(this.bitID, bitBody);
     });
   }
 
@@ -371,14 +375,6 @@ class BitEditor extends Component {
     );
   }
 }
-
-// Custom overrides for "code" style.
-const styleMap = {
-  CODE: {
-    fontFamily: 'monospace',
-    fontSize: 16,
-  },
-};
 
 function getBlockStyle(block) {
   switch (block.getType()) {
