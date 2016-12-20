@@ -12,7 +12,6 @@ class BitPreview extends Component {
     // active preview in the list. `timeSinceUpdated` stores the time since the
     // bit was last updated, in words.
     this.state = { active: false, timeSinceUpdated: this.timeSinceUpdated() };
-
     this.mounted = false;
     this.timerID = null;
   }
@@ -43,7 +42,7 @@ class BitPreview extends Component {
 
   refreshUpdatedAt(updatedAt) {
     this.setState({
-      timeSinceUpdated: this.timeSinceUpdated(updatedAt || this.props.updatedAt) 
+      timeSinceUpdated: this.timeSinceUpdated(updatedAt || this.props.updatedAt)
     });
   }
 
@@ -52,7 +51,7 @@ class BitPreview extends Component {
   }
 
   componentWillUnmount() {
-    // this.clearUpdateTimer();
+    this.clearUpdateTimer();
     this.mounted = false;
   }
 
@@ -100,7 +99,6 @@ class BitPreview extends Component {
             <Dotdotdot clamp={3}>
               <p className='card-text'>
                 {body}
-                {/* <span dangerouslySetInnerHTML={{ __html: body }}></span> */}
               </p>
             </Dotdotdot>
           </div>
