@@ -4,6 +4,8 @@ import { Link, browserHistory } from 'react-router';
 import Immutable from 'immutable';
 
 import BitPreview from './BitPreview';
+import InfiniteContainer from './InfiniteContainer';
+import NoBitsBox from './NoBitsBox';
 import constants from '../constants';
 import { getFetch, parseJSON } from '../helpers';
 
@@ -33,11 +35,9 @@ class BitBox extends Component {
 
     this.state = { bits: Immutable.OrderedMap(), loading: false, page: 1,
                    numPages: 1, fetchType: 'index', activeBit: null,
-                   activeBitID: null, disposition: disposition };
-    // Store a flag that will tell us whether we have to bits to show (if we
-    // don't, we'll want to show a message instead). Assume we have bits,
-    // so initialize to true.
-    this.hasBits = true;
+                   activeBitID: null, disposition: disposition,
+                   fetched: false };
+
     // Create our bit previews.
     this.buildPreviews();
   }
@@ -102,12 +102,10 @@ class BitBox extends Component {
       if (concatBits)
         bits = this.state.bits.concat(bits);
 
-      // Update the `hasBits` property indicating whether we have bits to show.
-      this.hasBits = (bits.size > 0);
-
       // Update state.
       this.setState({ bits: bits, loading: false, page: page,
-                      numPages: body.num_pages, fetchType: fetchType });
+                      numPages: body.num_pages, fetchType: fetchType,
+                      fetched: true });
     });
   }
 
@@ -165,7 +163,7 @@ class BitBox extends Component {
                   body='' />
     ]]).concat(this.state.bits);
 
-    this.setState({ bits: newBits });
+    this.setState({ bits: newBits, hasBits: true });
   }
 
   // A callback that handles the update of a new bit, updating the BitPreview
@@ -180,6 +178,15 @@ class BitBox extends Component {
     const newBits = bits.set(uniqueID, newPreview);
 
     this.setState({ bits: newBits });
+  }
+
+  // Returns true if we have bits to show, else false. Assumes that if we
+  // haven't yet fetched data, we will have bits to show.
+  hasBits = () => {
+    if (!this.state.fetched)
+      return true;
+    else
+      return this.state.bits.size > 0;
   }
 
   // A callback that handles the delete of a new bit, deleting the BitPreview
@@ -261,27 +268,22 @@ class BitBox extends Component {
   }
 
   render() {
+    const hasBits = this.hasBits();
+
     return (
       <div>
         {
-          (this.hasBits)
-          ? <div className='container-infinite animated fadeIn'>
-              <Infinite elementHeight={86}
-                        useWindowAsScrollContainer={true}
-                        infiniteLoadBeginEdgeOffset={400}
-                        handleScroll={this.handleScroll}
-                        onInfiniteLoad={this.handleLoad}
-                        loadingSpinnerDelegate={this.loadingElem()}
-                        isInfiniteLoading={this.state.loading}>
-                {this.state.bits.valueSeq()}
-              </Infinite>
-            </div>
-          : <p>
-              { (this.state.fetchType === 'index')
-                ? <span>Welcome to Bits! <Link to='/bits/new'>Create your first bit</Link></span>
-                : <span>No results for <u><em>{this.props.query}</em></u></span>
-              }.
-            </p>
+          (hasBits)
+          ? <InfiniteContainer handleScroll={this.handleScroll}
+                               onInfiniteLoad={this.handleLoad}
+                               loadingSpinnerDelegate={this.loadingElem()}
+                              isInfiniteLoading={this.state.loading}>
+              {this.state.bits.valueSeq()}
+            </InfiniteContainer>
+          : <NoBitsBox fetchType={this.state.fetchType}
+                       disposition={this.state.disposition}
+                       query={this.props.query}>
+            </NoBitsBox>
         }
       </div>
     );
