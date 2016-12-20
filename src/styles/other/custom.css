@@ -32,6 +32,7 @@ a {
 
 .card-preview {
   font-family: Georgia, serif;
+  word-wrap: break-word;
 }
 
 .card-preview:hover {

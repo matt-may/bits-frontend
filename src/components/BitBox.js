@@ -11,7 +11,6 @@ import { getFetch, parseJSON } from '../helpers';
 
 import '../styles/other/infinite.css';
 
-const SLICE_END_INDX = 30;
 const WINDOW_SIZE_BREAKPOINT = 768;
 
 /*
@@ -86,15 +85,15 @@ class BitBox extends Component {
         body.bits.map((bit) => {
           // When using the search endpoint, the body for the bit is actually
           // stored under the _source attribute, so account for that.
-          let bitBody = (bit._source) ? bit._source : bit;
-          let uniqueID = bitBody.unique_id;
+          let bitObj = (bit._source) ? bit._source : bit;
+          let uniqueID = bitObj.unique_id;
 
           // Return a BitPreview.
           return [uniqueID, <BitPreview key={uniqueID} num={uniqueID}
                                         onClick={this.handleBitClick}
                                         onMount={this.resetActiveBit}
                                         activeBitID={this.state.activeBitID}
-                                        body={this.sliceBody(bitBody.body)} />];
+                                        body={bitObj.body} />];
         })
       );
 
@@ -107,12 +106,6 @@ class BitBox extends Component {
                       numPages: body.num_pages, fetchType: fetchType,
                       fetched: true });
     });
-  }
-
-  // Slice the body text for previews.
-  sliceBody(body) {
-    if (!body || typeof body !== 'string') return;
-    return body.slice(0, SLICE_END_INDX);
   }
 
   // Resets the active bit to the one passed in. This is a callback executed
@@ -174,7 +167,7 @@ class BitBox extends Component {
                                    onClick={this.handleBitClick}
                                    onMount={this.resetActiveBit}
                                    activeBitID={this.state.activeBitID}
-                                   body={this.sliceBody(body)} />;
+                                   body={body} />;
     const newBits = bits.set(uniqueID, newPreview);
 
     this.setState({ bits: newBits });

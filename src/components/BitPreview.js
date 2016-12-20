@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { browserHistory } from 'react-router';
+
+const SLICE_END_INDX = 80;
 
 class BitPreview extends Component {
   constructor(props) {
@@ -43,12 +44,28 @@ class BitPreview extends Component {
     });
   }
 
+  // Slices the a string of text up to a given index for previews.
+  sliceBody(body) {
+    if (!body || typeof body !== 'string') return '';
+    return body.slice(0, SLICE_END_INDX);
+  }
+
+  // Determines if an ellipsis is needed when truncating `fullBody` to
+  // `slicedBody` for showing in a preview. Returns true if yes, else false.
+  needsEllipsis(slicedBody, fullBody) {
+    return slicedBody.length < fullBody.length;
+  }
+
   render() {
     let className = 'card card-preview';
 
     // If the current object is active, add a special class.
     if (this.state.active)
       className += ' card-inverse';
+
+    const fullBody = this.props.body;
+    const slicedBody = this.sliceBody(fullBody);
+    const needsEllipsis = this.needsEllipsis(slicedBody, fullBody);
 
     return (
       <div className='infinite-list-item' ref='card' id={this.props.num}>
@@ -57,8 +74,11 @@ class BitPreview extends Component {
             <p className='card-text'>
               <span>
                 {
-                  (this.props.body && this.props.body.length)
-                  ? this.props.body
+                  (slicedBody)
+                  ? <span>
+                      <span>{slicedBody}</span>
+                      <span>{needsEllipsis ? '...' : ''}</span>
+                    </span>
                   : 'Empty bit :-)'
                 }
               </span>
