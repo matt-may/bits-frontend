@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { timeSince } from '../helpers';
 
-const SLICE_END_INDX = 80;
+const SLICE_END_INDX = 53;
 
 class BitPreview extends Component {
   constructor(props) {
@@ -49,7 +49,7 @@ class BitPreview extends Component {
   // Slices a string of text up to a given index for previews.
   sliceBody(body) {
     if (!body || typeof body !== 'string')
-      return '';
+      return 'Empty bit :-)';
 
     let slice = body.slice(0, SLICE_END_INDX);
 
@@ -70,7 +70,7 @@ class BitPreview extends Component {
 
     // If the current object is active, add a special class.
     if (this.state.active)
-      className += ' card-inverse';
+      className += ' card-active';
 
     // Slice the body text for display.
     const slicedBody = this.sliceBody(this.props.body);
@@ -80,16 +80,11 @@ class BitPreview extends Component {
         <div onClick={this.handleClick} className={className}>
           <div className='card-block'>
             <p className='card-text'>
-              <span>
-                {
-                  (slicedBody)
-                  ? <span>{slicedBody}</span>
-                  : 'Empty bit :-)'
-                }
+              <span dangerouslySetInnerHTML={{__html: slicedBody}}>
               </span>
             </p>
           </div>
-          <div className='card-footer text-muted'>
+          <div className='card-footer text-muted sans-serif'>
             Updated {timeSince(this.props.updatedAt)}
           </div>
         </div>

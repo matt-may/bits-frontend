@@ -85,16 +85,17 @@ class BitBox extends Component {
         body.bits.map((bit) => {
           // When using the search endpoint, the body for the bit is actually
           // stored under the _source attribute, so account for that.
-          let bitObj = (bit._source) ? bit._source : bit;
-          let uniqueID = bitObj.unique_id;
+          const bitObj = bit._source ? bit._source : bit;
+          const { uniqueID, body } = bitObj;
+          const highlight = bit.highlight ? bit.highlight.body[0] : null;
 
           // Return a BitPreview.
           return [uniqueID, <BitPreview key={uniqueID} num={uniqueID}
                                         onClick={this.handleBitClick}
                                         onMount={this.resetActiveBit}
                                         activeBitID={this.state.activeBitID}
-                                        body={bitObj.body}
-                                        updatedAt={bitObj.updated_at} />];
+                                        body={body}
+                                        updatedAt={bitObj.updated_at}/>];
         })
       );
 
@@ -154,22 +155,28 @@ class BitBox extends Component {
                   onClick={this.handleBitClick}
                   onMount={this.resetActiveBit}
                   activeBitID={this.state.activeBitID}
-                  body='' />
+                  body=''
+                  updatedAt={new Date()}/>
     ]]).concat(this.state.bits);
 
-    this.setState({ bits: newBits, hasBits: true });
+    this.setState({ bits: newBits });
   }
 
   // A callback that handles the update of a new bit, updating the BitPreview
   // object in the list.
   handleBitUpdate(uniqueID, body) {
     const bits = this.state.bits;
-    const newPreview = <BitPreview key={uniqueID} num={uniqueID}
-                                   onClick={this.handleBitClick}
-                                   onMount={this.resetActiveBit}
-                                   activeBitID={this.state.activeBitID}
-                                   body={body} />;
-    const newBits = bits.set(uniqueID, newPreview);
+    const nonUpdatedBits = bits.delete(uniqueID);
+
+    const newBits = Immutable.OrderedMap([[
+      uniqueID,
+      <BitPreview key={uniqueID} num={uniqueID}
+                                 onClick={this.handleBitClick}
+                                 onMount={this.resetActiveBit}
+                                 activeBitID={this.state.activeBitID}
+                                 body={body}
+                                 updatedAt={new Date()}/>
+    ]]).concat(nonUpdatedBits);
 
     this.setState({ bits: newBits });
   }
