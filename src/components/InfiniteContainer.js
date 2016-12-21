@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import Infinite from 'react-infinite';
 
-const elemHeight = 159;
-const infiniteLoadBeginEdgeOffset = elemHeight * 2;
+const elemHeight = 135;
+const infiniteLoadBeginEdgeOffset = elemHeight * 2.5;
 
 class InfiniteContainer extends Component {
   render() {

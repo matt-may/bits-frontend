@@ -96,7 +96,7 @@ class BitPreview extends Component {
       <div className='infinite-list-item' ref='card' id={this.props.num}>
         <div onClick={this.handleClick} className={className}>
           <div className='card-block'>
-            <Dotdotdot clamp={3}>
+            <Dotdotdot clamp={2}>
               <p className='card-text'>
                 {body}
               </p>
