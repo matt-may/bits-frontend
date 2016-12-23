@@ -131,7 +131,7 @@ class BitEditor extends Component {
     this.setState((prevState) => {
       const newState = !prevState.fullWindow;
 
-      if (newState && !isMobile())
+      if (newState)
         document.body.style.overflow = 'hidden';
       else
         document.body.style.overflow = null;
@@ -377,10 +377,14 @@ class BitEditor extends Component {
           editorState={editorState}
           onToggle={this.toggleInlineStyle}
         />
-        <button className='btn btn-sm btn-secondary mr-1'
-                onClick={this.toggleFullWindow}>
-          Full
-        </button>
+        {
+          (!isMobile())
+          ? <button className='btn btn-sm btn-secondary mr-1'
+                  onClick={this.toggleFullWindow}>
+              Full
+            </button>
+          : null
+        }
         <button className='btn btn-sm btn-primary mr-1'
                 onClick={this.forceUpdate}>
           Save
