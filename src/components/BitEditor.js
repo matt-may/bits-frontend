@@ -3,7 +3,7 @@ import { Editor, EditorState, RichUtils, convertFromRaw, convertToRaw } from 'dr
 import { browserHistory } from 'react-router';
 
 import constants from '../constants';
-import { checkStatus, parseJSON, getFetch, fetchWithTokenAsJson } from '../helpers';
+import { checkStatus, parseJSON, getFetch, fetchWithTokenAsJson, isMobile } from '../helpers';
 
 import '../styles/other/draft.css';
 import '../styles/other/rich_editor.css';
@@ -131,7 +131,7 @@ class BitEditor extends Component {
     this.setState((prevState) => {
       const newState = !prevState.fullWindow;
 
-      if (newState)
+      if (newState && !isMobile())
         document.body.style.overflow = 'hidden';
       else
         document.body.style.overflow = null;

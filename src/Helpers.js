@@ -123,10 +123,15 @@ function timeSince(date) {
   return interval + ' ' + intervalType + ' ago';
 }
 
+function isMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+}
+
 module.exports = {
   checkStatus: checkStatus,
   parseJSON: parseJSON,
   getFetch: getFetch,
   fetchWithTokenAsJson: fetchWithTokenAsJson,
-  timeSince: timeSince
+  timeSince: timeSince,
+  isMobile: isMobile
 }
