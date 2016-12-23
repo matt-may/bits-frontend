@@ -129,7 +129,14 @@ class BitEditor extends Component {
       this.props.onFullWindow();
 
     this.setState((prevState) => {
-      return { fullWindow: !prevState.fullWindow }
+      const newState = !prevState.fullWindow;
+
+      if (newState)
+        document.body.style.overflow = 'hidden';
+      else
+        document.body.style.overflow = null;
+
+      return { fullWindow: newState }
     });
   }
 
@@ -194,6 +201,10 @@ class BitEditor extends Component {
   // Clears the update timer on unmount.
   componentWillUnmount() {
     this.clearUpdateTimer();
+
+    // Reset the overflow style on the body, if we changed it to display the
+    // editor in full-window mode.
+    document.body.style.overflow = null;
   }
 
   // Syncs the client and server editor state every N seconds, and executes an
