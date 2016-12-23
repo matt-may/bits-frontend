@@ -76,10 +76,35 @@ class BitPreview extends Component {
 
   // Formats the bit body for display.
   formatBody(body) {
-    if (!body || typeof body !== 'string')
+    if (!body || !(/\S/.test(body)) || typeof body !== 'string')
       return 'Empty bit :-)';
 
-    return body;
+    const nonWhitespace = body.search(/\S/)
+    const substring = body.substring(nonWhitespace);
+    const nextNewline = substring.indexOf('\n');
+
+    if (nextNewline === -1) {
+      return (
+        <Dotdotdot clamp={2}>
+          <p className='card-text'>{body}</p>
+        </Dotdotdot>
+      );
+    }
+    else {
+      const firstSlice = body.slice(nonWhitespace, nextNewline + nonWhitespace);
+      const secondSlice = body.slice(nextNewline + nonWhitespace, body.length);
+
+      return (
+        <div>
+          <Dotdotdot clamp={1}>
+            <p className='card-text'>{firstSlice}</p>
+          </Dotdotdot>
+          <Dotdotdot clamp={1}>
+            <p className='card-text'>{secondSlice}</p>
+          </Dotdotdot>
+        </div>
+      )
+    }
   }
 
   render() {
@@ -96,11 +121,7 @@ class BitPreview extends Component {
       <div className='infinite-list-item' ref='card' id={this.props.num}>
         <div onClick={this.handleClick} className={className}>
           <div className='card-block'>
-            <Dotdotdot clamp={2}>
-              <p className='card-text'>
-                {body}
-              </p>
-            </Dotdotdot>
+            {body}
           </div>
           <div className='card-footer text-muted sans-serif'>
             Updated {this.state.timeSinceUpdated}
