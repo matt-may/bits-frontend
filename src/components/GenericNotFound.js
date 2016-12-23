@@ -4,7 +4,7 @@ class GenericNotFound extends Component {
   render() {
     return (
       <div>
-        Not found buddy
+        We're sorry, that page wasn't found.
       </div>
     );
   }

@@ -281,6 +281,9 @@ class BitEditor extends Component {
       if (this.props.onBitUpdate) {
         this.props.onBitUpdate(this.bitID, bitBody);
       }
+    })
+    .catch(() => {
+      throw new Error('Unable to update bit on the server.');
     });
   }
 
@@ -323,6 +326,9 @@ class BitEditor extends Component {
 
       // Reset our path.
       browserHistory.push('/bits');
+    })
+    .catch(() => {
+      throw new Error('Unable to delete bit.');
     });
   }
 
@@ -390,7 +396,7 @@ class BitEditor extends Component {
               overflowY: 'scroll',
               overflowX: 'hidden'
             }
-          : {} } ref={(wrapper) => { this.editorWrapper = wrapper }}>
+          : {}} ref={(wrapper) => { this.editorWrapper = wrapper }}>
           <Editor
             blockStyleFn={getBlockStyle}
             customStyleMap={styleMap}

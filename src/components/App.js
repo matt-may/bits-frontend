@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import 'whatwg-fetch';
-// import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 // CSS
 import '../styles/other/bootstrap.css';
