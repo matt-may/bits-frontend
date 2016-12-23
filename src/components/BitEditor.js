@@ -380,7 +380,7 @@ class BitEditor extends Component {
         {
           (!isMobile())
           ? <button className='btn btn-sm btn-secondary mr-1'
-                  onClick={this.toggleFullWindow}>
+                    onClick={this.toggleFullWindow}>
               Full
             </button>
           : null
