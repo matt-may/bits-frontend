@@ -54,10 +54,12 @@ class BitSearch extends Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.updateDimensions);
+    window.addEventListener('scroll', this.updateDimensions);
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.updateDimensions);
+    window.removeEventListener('scroll', this.updateDimensions);
   }
 
   render() {
@@ -78,10 +80,10 @@ class BitSearch extends Component {
         <StickyContainer>
           <div className='row'>
             <div className='col-md-4'>
-              <NewBitButton className='btn btn-success mb-1' />
+              <NewBitButton className='btn btn-success mb-1'/>
               <div className='mb-1'>
                 <input type='text' value={this.state.value} onChange={this.handleChange}
-                       placeholder='Search your bits.' className='form-control' />
+                       placeholder='Search your bits.' className='form-control'/>
               </div>
               <BitBox query={this.state.value}
                       newBit={this.state.newBit}
@@ -89,7 +91,7 @@ class BitSearch extends Component {
                       updatedBit={this.state.updatedBit}
                       deletedBit={this.state.deletedBit}
                       windowHeight={this.state.height}
-                      windowWidth={this.state.width} />
+                      windowWidth={this.state.width}/>
             </div>
             <div className='col-md-8 hidden-sm-down'>
               <Sticky className={stickyClass} topOffset={-15}>
@@ -98,7 +100,8 @@ class BitSearch extends Component {
                            onBitCreate={this.handleBitCreate}
                            onBitUpdate={this.handleBitUpdate}
                            onBitDelete={this.handleBitDelete}
-                           onFullWindow={this.toggleFullWindowEditor} />
+                           onFullWindow={this.toggleFullWindowEditor}
+                           windowHeight={this.state.height}/>
               </Sticky>
             </div>
           </div>

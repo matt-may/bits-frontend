@@ -344,6 +344,12 @@ class BitEditor extends Component {
     if (this.state.fullWindow)
       wrapperClassName += ' editor-full-window';
 
+    let editorDistFromTop = 0;
+    if (this.editorWrapper) {
+      const viewportOffset = this.editorWrapper.getBoundingClientRect();
+      editorDistFromTop = viewportOffset.top;
+    }
+
     return (
       <div className={wrapperClassName}>
         <BlockStyleControls
@@ -354,17 +360,37 @@ class BitEditor extends Component {
           editorState={editorState}
           onToggle={this.toggleInlineStyle}
         />
-        <button className='btn btn-sm btn-secondary mr-1' onClick={this.toggleFullWindow}>Full</button>
-        <button className='btn btn-sm btn-primary mr-1' onClick={this.forceUpdate}>Save</button>
+        <button className='btn btn-sm btn-secondary mr-1'
+                onClick={this.toggleFullWindow}>
+          Full
+        </button>
+        <button className='btn btn-sm btn-primary mr-1'
+                onClick={this.forceUpdate}>
+          Save
+        </button>
         <div className='text-muted float-xs-right sans-serif'>
-          <span style={{verticalAlign: 'bottom'}}>{this.state.inSync ? 'Saved' : 'Saving...'}</span>
+          <span style={{ verticalAlign: 'bottom' }}>
+            {this.state.inSync ? 'Saved' : 'Saving...'}
+          </span>
           {
             (this.bitID)
-            ? <button className='btn btn-sm btn-warning ml-1' onClick={this.handleDelete}>Delete</button>
+            ? <button className='btn btn-sm btn-warning ml-1'
+                      onClick={this.handleDelete}>
+                Delete
+              </button>
             : null
           }
         </div>
-        <div className={className} onClick={this.focus}>
+        <div className={className}
+             onClick={this.focus}
+             style={
+          (this.props.windowHeight)
+          ? {
+              height: this.props.windowHeight - editorDistFromTop,
+              overflowY: 'scroll',
+              overflowX: 'hidden'
+            }
+          : {} } ref={(wrapper) => { this.editorWrapper = wrapper }}>
           <Editor
             blockStyleFn={getBlockStyle}
             customStyleMap={styleMap}
