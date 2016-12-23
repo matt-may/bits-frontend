@@ -103,7 +103,7 @@ class BitPreview extends Component {
             <p className='card-text'>{secondSlice}</p>
           </Dotdotdot>
         </div>
-      )
+      );
     }
   }
 
